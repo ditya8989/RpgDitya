@@ -91,7 +91,3 @@ Bagian kode di `index.html` diberi judul per bagian: DASAR, LAGU TEMA, AUDIO, PI
 STATE & HUD, ENTITAS & KAMERA, INPUT, DIALOG/PONSEL, EFEK, RENDER, ADEGAN KHUSUS, BABAK, ALUR.
 Dialog tiap babak ada di bagian BABAK, jadi mudah diubah tanpa menyentuh mesin game.
 
-## Kerangka Ren'Py (lama)
-
-Folder `game/` berisi kerangka Ren'Py dari PRD awal (3 ending romansa) dan **belum** mengikuti cerita baru.
-Cara menjalankannya: buat proyek baru di Ren'Py Launcher, salin isi `game/` ke folder `game/` proyek itu, lalu Launch Project.
