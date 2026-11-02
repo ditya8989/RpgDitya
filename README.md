@@ -1,7 +1,7 @@
 # Echoes of Semester
 
 RPG pixel naratif tentang ekspektasi dan realita, dari semester 3 sampai 7.
-Tokoh utama: **Adgan**. Tokoh perempuan: **Umi**.
+Tokoh utama: **Adgan**. Tokoh perempuan: **Maryjune**.
 Naskah cerita (sumber utama): `docs/CERITA.md`.
 
 Main langsung: **https://echoes-of-semester.vercel.app** (browser, laptop, atau HP)
@@ -54,7 +54,7 @@ ke publik; pakai lagu yang memang boleh kamu sebarkan, atau biarkan kosong (chip
 
 | Babak | Tempat | Yang dimainkan |
 |---|---|---|
-| I · Meja UNO dan Frekuensi yang Pas (Sem 3) | Kantin | Mini-game Frekuensi: balas celetukan Umi sebelum jeda habis. Bar ♥ mulai terisi diam-diam |
+| I · Meja UNO dan Frekuensi yang Pas (Sem 3) | Kantin | Mini-game Frekuensi: balas celetukan Maryjune sebelum jeda habis. Bar ♥ mulai terisi diam-diam |
 | II · Mengamati dari Garis Batas (Sem 4–5) | Kelas, lab, selasar, peta musim | Garis batas di lantai, curi pandang, draf pesan yang tak pernah terkirim, jadwal praktikum |
 | III · Sengketa di Lorong Semester Enam (Sem 6) | Selasar lantai 3, ruang koordinator | Kumpulkan bukti, sidang lawan BENANG KUSUT, montase chat larut malam |
 | IV · Buket Rajut Ungu dan Layar yang Terbelah (Sem 7) | Depan ruang seminar | Layar terbelah EKSPEKTASI vs REALITA |

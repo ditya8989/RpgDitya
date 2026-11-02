@@ -423,7 +423,7 @@
     <div id="mg" class="paper" hidden>
       <div class="row"><span class="ttl">FREKUENSI</span><span id="mg-round"></span></div>
       <canvas id="mg-wave" width="144" height="24"></canvas>
-      <div class="row"><span class="her">~ UMI</span><span class="me">ADGAN ~</span></div>
+      <div class="row"><span class="her">~ MARYJUNE</span><span class="me">ADGAN ~</span></div>
       <div class="timer"><i id="mg-tfill"></i></div>
       <div id="mg-res" hidden></div>
     </div>
@@ -438,7 +438,7 @@
     </div>
     <div id="phone" hidden><div class="scr">
       <div class="ph-bar"><span id="ph-clock">22.18</span><span>4G 41%</span></div>
-      <div class="ph-head"><img id="ph-av" alt=""><div><b id="ph-name">Umi</b><small id="ph-sub">online</small></div></div>
+      <div class="ph-head"><img id="ph-av" alt=""><div><b id="ph-name">Maryjune</b><small id="ph-sub">online</small></div></div>
       <div id="ph-log" class="ph-log"></div>
       <div id="ph-foot" class="ph-foot"></div>
     </div></div>
@@ -2213,7 +2213,7 @@ const CH = {
   batin:  { name: "", cls: "batin" },
   sys:    { name: "", cls: "sys" },
   p:      { name: () => S.player, color: "#7fb3ff", voice: 520, ent: "player" },
-  j:      { name: "Umi", color: "#ffb37f", voice: 800, ent: "umi" },
+  j:      { name: "Maryjune", color: "#ffb37f", voice: 800, ent: "umi" },
   dimas:  { name: "Dimas", color: "#8fe08a", voice: 380, ent: "dimas" },
   sari:   { name: "Sari", color: "#f0a0d8", voice: 700, ent: "sari" },
   caca:   { name: "Caca", color: "#ff8a8a", voice: 760, ent: "caca" },
@@ -2419,7 +2419,7 @@ async function ovHide(ms = 450) {
 /* ---------- Ponsel ---------- */
 const phone = {
   open(sub = "online") {
-    $("#ph-name").textContent = "Umi";
+    $("#ph-name").textContent = "Maryjune";
     $("#ph-sub").textContent = sub;
     $("#ph-av").src = PH_AVATAR;
     const ph = $("#phone");
@@ -3605,8 +3605,8 @@ function drawSplit(now) {
 async function saySplit(l, r, { lw, rw } = {}) {
   const set = (el, who) => { el.innerHTML = (who ? "<b>" + who + "</b>" : "") + "<span></span>"; el.style.opacity = 1; return el.querySelector("span"); };
   const items = [];
-  if (l !== null) items.push([set($("#sL"), lw), l, lw === "Umi" ? 800 : 0]);
-  if (r !== null) items.push([set($("#sR"), rw), r, rw === "Umi" ? 800 : rw ? 400 : 0]);
+  if (l !== null) items.push([set($("#sL"), lw), l, lw === "Maryjune" ? 800 : 0]);
+  if (r !== null) items.push([set($("#sR"), rw), r, rw === "Maryjune" ? 800 : rw ? 400 : 0]);
   mode = "dialog";
   await new Promise((res) => {
     let i = 0;
@@ -3923,13 +3923,13 @@ SCENES.b1 = {
   fx: { shafts: "#fff0c0", dust: true, lightsY: 26, vig: "70,35,10", vigA: 0.35 },
   npcs: () => [
     NPC("m1", 4, 4, "down", () => say("m", "Taruhannya es teh. Yang kalah traktir semeja!", "m1"), null, { laugh: true, chatter: ["HAHA", "WKWK", "!!"] }),
-    NPC("sari", 6, 4, "down", () => say("sari", "Hati-hati, Umi kalau main kartu nggak kenal ampun."), null, { laugh: true, chatter: ["HIHI", "HAHA"] }),
+    NPC("sari", 6, 4, "down", () => say("sari", "Hati-hati, Maryjune kalau main kartu nggak kenal ampun."), null, { laugh: true, chatter: ["HIHI", "HAHA"] }),
     NPC("umi", 8, 4, "down", async () => {
       if (S.f.sat) return say("j", "Ayo, giliranmu!");
       await say("j", "Kamu ikut? Siap-siap kalah, ya.");
       emote("umi", "note");
     }, null, { chatter: ["HEHE"], chatEvery: [6000, 11000] }),
-    NPC("dimas", 10, 4, "down", () => say("dimas", "Kursi kosongnya di depan Umi tuh. Buruan, kartunya udah dikocok!"), null, { laugh: true, chatter: ["WKWK", "UNO!", "HAHA"] }),
+    NPC("dimas", 10, 4, "down", () => say("dimas", "Kursi kosongnya di depan Maryjune tuh. Buruan, kartunya udah dikocok!"), null, { laugh: true, chatter: ["WKWK", "UNO!", "HAHA"] }),
     NPC("m2", 5, 6, "up", () => say("m", "Kelas gabungan gini seru, ya. Banyak muka baru.", "m2"), null, { laugh: true, chatter: ["HAHA", "WKWK"] }),
     NPC("m3", 7, 6, "up", () => say("m", "Aku udah kalah tiga kali. Dompetku menangis.", "m3"), null, { laugh: true, chatter: ["ADUH", "HAHA"] }),
     NPC("m4", 10, 6, "up", () => say("m", "Kartu +4 tadi siapa yang ngeluarin? Jahat banget.", "m4"), null, { laugh: true, chatter: ["HAHA", "HIHI"] }),
@@ -3946,7 +3946,7 @@ SCENES.b1 = {
     OBJ([[17, 4]], () => say("n", "Dua orang di meja pojok serius membahas tugas Kalkulus.")),
   ],
   spots: () => (S.f.sat ? [] : [{ x: 8, y: 6 }]),
-  objective: () => (S.f.sat ? "" : "Duduk di kursi kosong, di seberang Umi"),
+  objective: () => (S.f.sat ? "" : "Duduk di kursi kosong, di seberang Maryjune"),
   async enter() {
     await say("n", "Kantin kampus, sepulang kuliah. Kelas gabungan semester tiga: banyak wajah baru, banyak tawa baru.");
     emote("dimas", "!");
@@ -3961,7 +3961,7 @@ async function b1Sit() {
   S.f.sat = true;
   face(P, "up");
   updateHud();
-  await say("n", "Kamu duduk. Tepat di seberangmu: Umi.");
+  await say("n", "Kamu duduk. Tepat di seberangmu: Maryjune.");
   emote("umi", "smile");
   await say("j", "Oke, lengkap! Aturannya simpel: yang kalah traktir es teh.");
   await say("dimas", "Kocok, kocok! Bagi kartunya!");
@@ -3970,8 +3970,8 @@ async function b1Sit() {
   custom = { world: (now) => drawCards(now) };
   for (let i = 0; i < 5; i++) { throwCard(npc("dimas"), 8 * T + 8 + rnd(-24, 24), 5 * T + 7 + rnd(-2, 2)); await wait(130); }
   await wait(400);
-  await say("n", "Setiap kali Umi melempar kartu, celetukan dan candaannya selalu memantul ke arahmu.");
-  await say("sys", "MINI-GAME: FREKUENSI YANG PAS. Balas celetukan Umi sebelum jedanya habis. Pilih balasan yang nadanya pas!");
+  await say("n", "Setiap kali Maryjune melempar kartu, celetukan dan candaannya selalu memantul ke arahmu.");
+  await say("sys", "MINI-GAME: FREKUENSI YANG PAS. Balas celetukan Maryjune sebelum jedanya habis. Pilih balasan yang nadanya pas!");
   await freqGame();
   custom = { world: (now) => drawCards(now) };
   await say("n", "Kartu terakhir dibuka bersamaan. Meja panjang meledak oleh tawa.");
@@ -4036,11 +4036,11 @@ async function b2aLecture() {
   updateHud();
   await say("dosen", "Baik, kita lanjut normalisasi. Buka modul halaman empat puluh dua.");
   await say("n", "Dari barisan belakang, bangku depan kelihatan jelas.");
-  await glance(npc("umi"), "Umi tertawa kecil mendengar bisikan Sari, lalu buru-buru menutup mulutnya.",
+  await glance(npc("umi"), "Maryjune tertawa kecil mendengar bisikan Sari, lalu buru-buru menutup mulutnya.",
     ["Curi pandang sebentar", "Tahan. Fokus ke papan tulis"],
     ["Tawanya masih sama kayak di kantin.", "Fokus. Bentuk normal ketiga. Bentuk normal ketiga..."]);
   face(npc("umi"), "left");
-  await glance(npc("umi"), "Umi menopang dagu, menatap hujan di jendela.",
+  await glance(npc("umi"), "Maryjune menopang dagu, menatap hujan di jendela.",
     ["Ikut menatap hujan yang sama", "Catat penjelasan dosen"],
     ["Kami melihat hujan yang sama. Itu... dihitung, kan?", "Catatanku rapi. Setidaknya ada yang rapi."]);
   await say("dosen", "Oke, sampai di sini dulu. Jangan lupa tugas minggu depan.");
@@ -4052,7 +4052,7 @@ async function b2aLecture() {
   await wait(350);
   await walk(j, [11, 4], [11, 9], [17, 9], [17, 10]);
   j.hidden = true;
-  await heldDraft("Umi, catatan normalisasi tadi lengkap nggak? Aku ketinggalan slide terakhir.");
+  await heldDraft("Maryjune, catatan normalisasi tadi lengkap nggak? Aku ketinggalan slide terakhir.");
   await fadeOut();
   await seasonTravel("SEMESTER 4 - MENJELANG UAS", "uas", [56, 96], [160, 96]);
   await nextScene();
@@ -4091,7 +4091,7 @@ async function b2bModul() {
   await say("n", "...dan temannya lebih dulu menyodorkan miliknya.");
   await say("batin", "Selalu telat satu langkah. Atau... memang sengaja kutahan?");
   face(npc("umi"), "right");
-  await glance(npc("umi"), "Umi meregangkan tangan, lalu menguap lebar tanpa malu-malu.",
+  await glance(npc("umi"), "Maryjune meregangkan tangan, lalu menguap lebar tanpa malu-malu.",
     ["Perhatikan diam-diam", "Lanjut ngoding"],
     ["Bahkan nguapnya pun... ah, sudahlah.", "Fokus. Query ini belum jalan."]);
   await heldDraft("Tadi flashdisk-nya aman? Kalau butuh lagi, aku punya dua.");
@@ -4154,7 +4154,7 @@ async function b2cBoard() {
 }
 
 /* ---------- BABAK III ---------- */
-const EV = { aturan: "Aturan Pendaftaran KP", log: "Log Formulir TU", silabus: "Silabus KP", kCaca: "Kesaksian Kel. Caca", kUmi: "Kesaksian Kel. Umi" };
+const EV = { aturan: "Aturan Pendaftaran KP", log: "Log Formulir TU", silabus: "Silabus KP", kCaca: "Kesaksian Kel. Caca", kUmi: "Kesaksian Kel. Maryjune" };
 const EV_ORDER = ["aturan", "log", "silabus", "kCaca", "kUmi"];
 const readyForSidang = () => EV_ORDER.every((k) => S.f["ev_" + k]);
 function giveEv(k) { if (S.f["ev_" + k]) return; S.f["ev_" + k] = true; gotItem("BUKTI: " + EV[k]); updateHud(); }
@@ -4212,7 +4212,7 @@ SCENES.b3 = {
     await walk(j, [12, 5], [4, 5], [4, 3]);
     j.ghost = false;
     face(j, P); face(P, j);
-    await say("n", "Langkah Umi mendadak berbelok mencarimu. Dia berdiri di hadapanmu, menatap lurus.");
+    await say("n", "Langkah Maryjune mendadak berbelok mencarimu. Dia berdiri di hadapanmu, menatap lurus.");
     await say("j", "Gimana nih, Ketua? Tolong dong, nilai situasinya seadil-adilnya.");
     await say("j", "Apa pun penilaian kamu, aku anggap adil.");
     hope(6);
@@ -4234,7 +4234,7 @@ async function getAturan() {
 async function getLog() {
   if (!S.f.met) return;
   await say("admin", "Mau lihat log pendaftaran KP? Boleh, ini data terbuka kok.");
-  await say("n", "LOG TU. Kel. Caca: draf masuk 07.55 (belum TTD dosen wali), lengkap 10.20. Kel. Umi: lengkap 08.14.");
+  await say("n", "LOG TU. Kel. Caca: draf masuk 07.55 (belum TTD dosen wali), lengkap 10.20. Kel. Maryjune: lengkap 08.14.");
   giveEv("log");
 }
 async function getSilabus() {
@@ -4260,11 +4260,11 @@ async function enterSidang() {
   await sidang();
 }
 const CLAIMS = [
-  { who: "caca", text: "Kami yang daftar duluan, Pak! Draf form kami masuk TU jam 07.55, lebih pagi dari kelompok Umi!", ans: "aturan", dmg: 30,
+  { who: "caca", text: "Kami yang daftar duluan, Pak! Draf form kami masuk TU jam 07.55, lebih pagi dari kelompok Maryjune!", ans: "aturan", dmg: 30,
     win: "Aturan prodi jelas, Pak: yang dihitung adalah waktu FORM LENGKAP, bukan draf.", ok: "Benar. Itu aturan yang saya buat sendiri.",
     wrong: "Itu belum menjawab soal siapa yang duluan, Ketua." },
   { who: "caca", text: "Tapi tetap aja, form kami yang pertama sampai di meja TU!", ans: "log", dmg: 30,
-    win: "Menurut log TU, form Caca baru lengkap pukul 10.20. Kelompok Umi sudah lengkap pukul 08.14.", ok: "Data tidak bohong.",
+    win: "Menurut log TU, form Caca baru lengkap pukul 10.20. Kelompok Maryjune sudah lengkap pukul 08.14.", ok: "Data tidak bohong.",
     wrong: "Saya butuh catatan waktu, bukan klaim." },
   { honesty: true },
   { who: "fajar", text: "Pak, ide topik ini dari kami! Kami yang pertama membahasnya di kelas Bapak!", ans: "silabus", dmg: 25,
@@ -4306,7 +4306,7 @@ async function sidang() {
       i++;
     } else {
       await say(C.who, C.text);
-      const opts = EV_ORDER.map((k) => ({ text: EV[k], value: k })).concat([{ text: "Bela Umi (karena dia teman)", value: "bias" }]);
+      const opts = EV_ORDER.map((k) => ({ text: EV[k], value: k })).concat([{ text: "Bela Maryjune (karena dia teman)", value: "bias" }]);
       const pick = await choose(opts, { caption: ["sys", "Tunjukkan bukti yang tepat:"] });
       if (pick === C.ans) {
         await say("p", C.win);
@@ -4315,7 +4315,7 @@ async function sidang() {
         i++;
       } else if (pick === "bias") {
         S.st.bias++;
-        await say("p", "Pak, kelompok Umi sudah kerja keras banget...");
+        await say("p", "Pak, kelompok Maryjune sudah kerja keras banget...");
         await btMiss();
         await say("hendra", "Ketua, itu perasaan, bukan argumen. Data, ya.");
       } else {
@@ -4337,7 +4337,7 @@ async function sidang() {
   sfx.victory();
   burst(160, 66, ["#ffd84a", "#ffffff", "#9fe0c0", "#ff9ad0"], 40, 90, { layer: "screen" });
   await say("sys", "BENANG KUSUT TERURAI!");
-  await say("hendra", "Keputusan saya: topik inventaris UMKM untuk kelompok Umi.");
+  await say("hendra", "Keputusan saya: topik inventaris UMKM untuk kelompok Maryjune.");
   await say("hendra", "Kelompok Caca, jangan berkecil hati. Saya punya mitra lain dengan topik serupa. Nanti mampir ke ruangan saya.");
   await say("caca", "...Oke, Pak. Datanya memang jelas.");
   await say("caca", "Fair juga kamu, Ketua.");
@@ -4354,7 +4354,7 @@ async function sidang() {
   cam.snap = true;
   updateHud();
   await fadeIn(500);
-  await say("n", "Keadilan berhasil ditegakkan. Kelompok Umi berhak melanjutkan topiknya.");
+  await say("n", "Keadilan berhasil ditegakkan. Kelompok Maryjune berhak melanjutkan topiknya.");
   emote("umi", "note");
   await say("j", "Makasih, Ketua. Kamu beneran adil.");
   hope(10);
@@ -4448,7 +4448,7 @@ SCENES.b4 = {
     NPC("dimas", 4, 3, "down", () => say("dimas", "Wih, buket rajut! Nanti pas dia keluar, langsung kasih. Kita fotoin!"), null, { look: ["down", "right"], laugh: true, chatter: ["CIEE", "FOTO!"] }),
     NPC("sari", 5, 3, "down", () => say("sari", "Ungu! Cieee. Udah, nanti sekalian kita jodohin."), null, { laugh: true, chatter: ["CIEE", "HIHI"] }),
     NPC("m2", 15, 3, "left", () => say("m", "Grup kelas udah siap-siap, nih. Kamera standby.", "m2"), null, { laugh: true, chatter: ["CIEE", "!!"] }),
-    NPC("m4", 16, 3, "left", () => say("m", "Sempronya Umi lancar kayaknya. Dosennya ketawa-ketawa tadi.", "m4"), null, { look: ["left", "down"] }),
+    NPC("m4", 16, 3, "left", () => say("m", "Sempronya Maryjune lancar kayaknya. Dosennya ketawa-ketawa tadi.", "m4"), null, { look: ["left", "down"] }),
     NPC("m3", 13, 5, "left", () => say("m", "Habis ini giliranku sempro. Doain ya.", "m3"), null, { wander: { pts: [[13, 5], [7, 5]], i: 0, until: 0 } }),
   ],
   objects: () => [OBJ([[9, 1], [10, 1]], () => say("n", "Pintu kayu cokelat. Dari dalam terdengar suara presentasi, lalu tepuk tangan kecil."))],
@@ -4456,7 +4456,7 @@ SCENES.b4 = {
   objective: () => (S.f.waited ? "" : "Tunggu di depan pintu ruang seminar"),
   async enter() {
     P.carry = "buket";
-    await say("n", "Koridor depan ruang seminar proposal. Di balik pintu kayu cokelat itu, Umi sedang presentasi.");
+    await say("n", "Koridor depan ruang seminar proposal. Di balik pintu kayu cokelat itu, Maryjune sedang presentasi.");
     emote("dimas", "!");
     laughAll(["CIEE", "CIEE", "FOTO!"]);
     await say("dimas", "Nah, ini dia! Bawa buketnya? Mantap!");
@@ -4499,11 +4499,11 @@ async function splitScene() {
   SPL.heroL = "heroHatOffer"; SPL.heroR = "heroOffer";
   await saySplit("Kamu melangkah pasti. Buket ungu di tanganmu berkilau.", "Kamu menyodorkan buket. Tanganmu sedikit gemetar.");
   SPL.jL = "umiSpark"; SPL.hearts = 3;
-  await saySplit("Ini... buat aku?", "Eh, buat aku? ...Makasih, ya.", { lw: "Umi", rw: "Umi" });
+  await saySplit("Ini... buat aku?", "Eh, buat aku? ...Makasih, ya.", { lw: "Maryjune", rw: "Maryjune" });
   SPL.jL = "umiHug"; SPL.heroL = "heroHatSmile"; SPL.hearts = 8;
   SPL.jR = "umiPolite"; SPL.heroR = "heroStiff";
   anim(SPL, "mates", 0, 1, 900);
-  await saySplit("Dari semester tiga... aku tahu, kok. Sekarang aku ngerti.", "CIEEE! Foto dulu, foto berdua!", { lw: "Umi", rw: "Dimas" });
+  await saySplit("Dari semester tiga... aku tahu, kok. Sekarang aku ngerti.", "CIEEE! Foto dulu, foto berdua!", { lw: "Maryjune", rw: "Dimas" });
   await saySplit("Musik megah mengalun. Seluruh kehadiranmu akhirnya dipahami sebagai cinta.", "Kalian berdiri kaku berdampingan. Buket itu dipegangnya di depan tubuh. Senyumnya tipis, sopan.");
   SPL.flashAt = performance.now();
   sfx.shutter();
@@ -4703,7 +4703,7 @@ async function epNod() {
   const j = npc("umi"), row = P.y <= 4 ? 5 : 4;
   Object.assign(j, { hidden: false, x: 31, y: 3, ghost: true, path: [], speed: 3.6 });
   face(P, "right");
-  await say("n", "Dari arah gedung, Umi berjalan ke arahmu.");
+  await say("n", "Dari arah gedung, Maryjune berjalan ke arahmu.");
   closeBox();
   await walk(j, [31, row], [P.x + 2, row]);
   face(j, "left");
@@ -4873,7 +4873,7 @@ function titleScreen() {
     <div class="duo">
       <figure><canvas id="tp" width="16" height="16"></canvas><figcaption>ADGAN</figcaption></figure>
       <canvas id="tm" class="mid" width="9" height="9"></canvas>
-      <figure><canvas id="th" width="16" height="16"></canvas><figcaption>UMI</figcaption></figure>
+      <figure><canvas id="th" width="16" height="16"></canvas><figcaption>MARYJUNE</figcaption></figure>
     </div>
     <div><div class="tmenu"><div class="pixbtn" data-i="0">MULAI CERITA</div><div class="pixbtn" data-i="1" id="tchap"></div></div></div>
     <div class="hint"><span class="kb">ATAS/BAWAH pilih &middot; KIRI/KANAN ganti babak &middot; ENTER/Z mulai<br>dalam game: PANAH/WASD jalan &middot; Z aksi &middot; M musik &middot; F layar penuh</span><span class="tc">KETUK &lt; &gt; ganti babak &middot; ketuk PILIH BABAK lagi untuk mulai<br>dalam game: TOMBOL ARAH jalan &middot; Z aksi &middot; KETUK LAYAR lanjut</span></div>
