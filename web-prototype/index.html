@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Echoes of Semester</title>
 <meta name="description" content="RPG piksel naratif tentang ekspektasi dan realita, dari semester 3 sampai 7. Bisa dimainkan di browser, laptop, maupun HP.">
 <meta name="author" content="Muhammad Aditya">
@@ -346,10 +346,14 @@
      body.sentuh dipasang otomatis saat layar disentuh (lihat INPUT). D-pad & tombol Z hanya muncul
      saat Adgan bisa berjalan; dialog, pilihan, dan ponsel cukup diketuk langsung. */
   html, body { overscroll-behavior: none; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
-  html, body, #wrap { touch-action: none; }
+  /* Zoom halaman dimatikan (game sudah memenuhi layar, ada tombol layar penuh). touch-action tidak diwariskan,
+     jadi dipasang di setiap elemen. Kalau halaman tetap sempat ter-zoom (html.zoom, lihat INPUT),
+     cubitan dibuka lagi supaya pemain bisa zoom out. */
+  html, body, #wrap, #wrap *, #putar, #putar * { touch-action: none; }
   #wrap, #putar { -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
   #wrap img { -webkit-user-drag: none; }
-  .ph-log { touch-action: pan-y; }
+  #wrap .ph-log { touch-action: pan-y; }
+  html.zoom, html.zoom body, html.zoom #wrap, html.zoom #wrap *, html.zoom #putar, html.zoom #putar * { touch-action: manipulation; }
   body.sentuh .kb, body:not(.sentuh) .tc { display: none !important; }
   .tmenu .ar { display: inline-block; padding: 0 .35em; }
   body.sentuh .tmenu div { font-size: max(12px, calc(var(--u) * 3.2)); padding: max(9px, calc(var(--u) * 2.2)) max(12px, calc(var(--u) * 4)); }
@@ -2157,7 +2161,26 @@ addEventListener("pointerup", padRelease, true);
 addEventListener("pointercancel", padRelease, true);
 function padReset() { padPtr.clear(); setPadDir(null); zEl.classList.remove("on"); }
 $("#wrap").addEventListener("contextmenu", (e) => { if (touchUI) e.preventDefault(); });   // tekan lama di Android
-document.addEventListener("gesturestart", (e) => e.preventDefault(), { passive: false });   // iOS: cegah cubit-zoom
+// Zoom halaman: Android mematuhi meta viewport (user-scalable=no); iPhone mengabaikannya, jadi cubitan dua jari
+// dan gestur zoom WebKit dicegah di sini. Kalau halaman tetap sempat ter-zoom (mis. ketuk dua kali / layar diputar),
+// zoom dicoba dikembalikan ke 100% dan selama masih ter-zoom cubitan dibuka lagi, supaya pemain tidak terjebak.
+let zoomLepas = false, zoomResetAt = 0;
+const vpMeta = document.querySelector('meta[name="viewport"]'), VP_ASLI = vpMeta.getAttribute("content");
+for (const t of ["gesturestart", "gesturechange", "gestureend"]) document.addEventListener(t, (e) => { if (!zoomLepas) e.preventDefault(); }, { passive: false });
+document.addEventListener("touchmove", (e) => { if (!zoomLepas && e.touches.length > 1) e.preventDefault(); }, { passive: false });
+function cekZoom() {
+  const zoomed = !!window.visualViewport && visualViewport.scale > 1.01;
+  if (zoomed !== zoomLepas) { zoomLepas = zoomed; document.documentElement.classList.toggle("zoom", zoomed); }
+  const now = performance.now();
+  if (zoomed && now - zoomResetAt > 800) {
+    zoomResetAt = now;
+    // tulis ulang meta viewport: browser membacanya lagi dan kembali ke skala 1
+    vpMeta.setAttribute("content", VP_ASLI.replace("maximum-scale=1", "maximum-scale=1.0001"));
+    setTimeout(() => vpMeta.setAttribute("content", VP_ASLI), 60);
+  }
+}
+if (window.visualViewport) visualViewport.addEventListener("resize", cekZoom);
+addEventListener("orientationchange", () => setTimeout(cekZoom, 350));
 // HP: layar jangan meredup/terkunci selama bermain
 function keepAwake() {
   if (!touchUI || wakeLock || document.hidden || !navigator.wakeLock) return;
