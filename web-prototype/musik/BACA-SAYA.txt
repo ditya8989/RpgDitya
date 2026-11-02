@@ -1,0 +1,17 @@
+CARA MEMASANG LAGU TEMA
+=======================
+1. Simpan file lagu milikmu di folder ini dengan nama:  tema.mp3
+   (misalnya lagu "Merry Christmas, Please Don't Call" yang kamu punya)
+2. Refresh browser. Selesai.
+
+Secara bawaan lagu tema diputar di layar judul dan sepanjang Epilog.
+
+Mau diputar di babak lain, atau pakai nama file lain? Ubah LAGU_TEMA
+di bagian paling atas <script> pada index.html, contoh:
+  file: "musik/lagu-favorit.mp3"
+  dipakai: ["judul", "b5", "epilog"]     atau     dipakai: ["semua"]
+
+Pilihan untuk "dipakai": judul, b1, b2, b3, b4, epilog, semua.
+Babak V sengaja hening dan adegan layar terbelah memakai musiknya sendiri.
+
+Kalau file belum ada, game tetap jalan dengan musik chiptune bawaan.

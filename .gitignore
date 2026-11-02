@@ -1,0 +1,24 @@
+# Sistem operasi & editor
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+
+# Vercel CLI (muncul kalau folder di-link ke proyek Vercel)
+.vercel/
+
+# Lagu tema opsional: tidak ikut di-commit, karena bisa jadi lagu berhak cipta milik orang lain.
+# Game tetap jalan dengan chiptune bawaan kalau file ini tidak ada.
+web-prototype/musik/*.mp3
+web-prototype/musik/*.ogg
+web-prototype/musik/*.wav
+web-prototype/musik/*.m4a
+
+# Tangkapan layar referensi gaya (situs orang lain), bukan bagian dari game
+/Screenshot*.png
+
+# Ren'Py: hasil kompilasi & cache
+*.rpyc
+*.rpyb
+game/cache/
+game/saves/

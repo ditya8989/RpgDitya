@@ -1,0 +1,1343 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Echoes of Semester — 8-bit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root { --s: 3; --ink: #f4f0e6; --bg: #0f0e1a; --gold: #ffd84a; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; padding: 16px;
+    background: #07060c; color: var(--ink);
+    font-family: "Press Start 2P", ui-monospace, "Courier New", monospace;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: calc(var(--s) * 3px);
+  }
+  .px-font { font-size: max(8px, calc(var(--s) * 3px)); line-height: 1.7; }
+
+  /* ---------- HUD atas ---------- */
+  #hud {
+    width: calc(320px * var(--s)); max-width: 100%;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+    background: #14121f; border: calc(var(--s) * 1px) solid var(--ink);
+    padding: calc(var(--s) * 2.5px) calc(var(--s) * 4px);
+  }
+  #hud .where b { color: var(--gold); }
+  #hud .obj { color: #9fe0c0; }
+  #hud .bars { display: grid; grid-template-columns: auto auto auto auto; gap: 2px 8px; align-items: center; }
+  .seg { display: inline-flex; gap: 1px; }
+  .seg i { display: block; width: calc(var(--s) * 2px); height: calc(var(--s) * 3px); background: #34304a; }
+  .seg i.on { background: var(--c); }
+
+  /* ---------- Layar game ---------- */
+  #wrap { position: relative; width: calc(320px * var(--s)); height: calc(176px * var(--s)); cursor: pointer; }
+  #game { width: 100%; height: 100%; display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
+  #wrap.shake { animation: shake .4s; }
+  @keyframes shake {
+    0%,100% { transform: none; } 20% { transform: translate(-6px, 3px); }
+    40% { transform: translate(6px, -3px); } 60% { transform: translate(-4px, 2px); } 80% { transform: translate(3px, -1px); }
+  }
+  #fade { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity .7s; z-index: 4; }
+
+  /* ---------- Kotak dialog ---------- */
+  .win {
+    background: var(--bg);
+    border: calc(var(--s) * 1px) solid var(--ink);
+    box-shadow: 0 0 0 calc(var(--s) * 1px) var(--bg), inset 0 0 0 calc(var(--s) * 1px) var(--bg), inset 0 0 0 calc(var(--s) * 2px) #5a5478;
+  }
+  #box {
+    position: absolute; z-index: 5;
+    left: calc(var(--s) * 4px); right: calc(var(--s) * 4px); bottom: calc(var(--s) * 4px);
+    height: calc(var(--s) * 50px);
+    padding: calc(var(--s) * 7px) calc(var(--s) * 8px);
+    font-size: max(8px, calc(var(--s) * 4px)); line-height: 1.9;
+  }
+  #name {
+    position: absolute; top: calc(var(--s) * -8px); left: calc(var(--s) * 6px);
+    padding: calc(var(--s) * 2px) calc(var(--s) * 4px);
+    font-size: max(8px, calc(var(--s) * 3.5px));
+  }
+  #text.batin { color: #9fe0d0; }
+  #text.sys { color: var(--gold); }
+  #next { position: absolute; right: calc(var(--s) * 5px); bottom: calc(var(--s) * 3px); animation: blink .8s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ---------- Pilihan ---------- */
+  #choice {
+    position: absolute; z-index: 6; max-width: 86%;
+    right: calc(var(--s) * 4px); bottom: calc(var(--s) * 58px);
+    padding: calc(var(--s) * 4px) calc(var(--s) * 6px);
+    font-size: max(8px, calc(var(--s) * 3.5px)); line-height: 1.6;
+  }
+  #choice .opt { position: relative; cursor: pointer; padding: calc(var(--s) * 1.5px) 0 calc(var(--s) * 1.5px) calc(var(--s) * 7px); }
+  #choice .opt.sel { color: var(--gold); }
+  #choice .opt.sel::before { content: ">"; position: absolute; left: 0; animation: blink .8s steps(2) infinite; }
+  #choice.cards {
+    left: 50%; right: auto; transform: translateX(-50%); max-width: none;
+    display: flex; gap: calc(var(--s) * 4px); padding: 0;
+    background: none; border: 0; box-shadow: none; bottom: calc(var(--s) * 60px);
+  }
+  #choice.cards .opt {
+    width: calc(var(--s) * 22px); height: calc(var(--s) * 32px); padding: 0;
+    display: grid; place-items: center; text-align: center; color: #fff;
+    border: calc(var(--s) * 1px) solid #fff; box-shadow: 0 0 0 calc(var(--s) * 1px) #000;
+    font-size: max(7px, calc(var(--s) * 3px));
+    transition: transform .08s;
+  }
+  #choice.cards .opt.sel { transform: translateY(calc(var(--s) * -6px)); border-color: var(--gold); }
+  #choice.cards .opt.sel::before { content: none; }
+  .c-Merah { background: #c83030; } .c-Kuning { background: #d8a020; }
+  .c-Hijau { background: #2f9a4f; } .c-Biru { background: #2f5fc8; }
+  .c-Wild { background: linear-gradient(135deg, #c83030 25%, #d8a020 25% 50%, #2f9a4f 50% 75%, #2f5fc8 75%); }
+
+  /* ---------- Notifikasi stat ---------- */
+  #toasts { position: absolute; z-index: 7; left: calc(var(--s) * 4px); top: calc(var(--s) * 4px); display: flex; flex-direction: column; gap: calc(var(--s) * 2px); pointer-events: none; }
+  .toast { padding: calc(var(--s) * 2px) calc(var(--s) * 4px); font-size: max(7px, calc(var(--s) * 3px)); animation: toast 2.4s steps(6) forwards; }
+  @keyframes toast { 0% { opacity: 0; } 8%, 85% { opacity: 1; } 100% { opacity: 0; } }
+
+  /* ---------- Overlay (judul, babak, ending) ---------- */
+  #ov {
+    position: absolute; inset: 0; z-index: 10; background: #000;
+    display: grid; place-items: center; text-align: center; padding: 6%;
+    transition: opacity .4s;
+  }
+  #ov .big { font-size: max(12px, calc(var(--s) * 8px)); color: var(--gold); margin-bottom: calc(var(--s) * 6px); }
+  #ov .sub { font-size: max(8px, calc(var(--s) * 4px)); color: #b8b0d8; line-height: 1.8; }
+  #ov .logo { font-size: max(14px, calc(var(--s) * 10px)); line-height: 1.4; color: var(--gold); text-shadow: calc(var(--s) * 1px) calc(var(--s) * 1px) 0 #c83030; margin-bottom: calc(var(--s) * 3px); }
+  #ov .duo { display: flex; justify-content: center; align-items: center; gap: calc(var(--s) * 6px); margin: calc(var(--s) * 6px) 0; }
+  #ov .duo canvas { width: calc(var(--s) * 32px); height: calc(var(--s) * 32px); image-rendering: pixelated; }
+  #ov .duo span { color: #ff7a90; font-size: max(10px, calc(var(--s) * 5px)); }
+  #ov label, #ov .menu, #ov .hint, #ov .stats { font-size: max(8px, calc(var(--s) * 3.5px)); line-height: 2; }
+  #ov input {
+    font: inherit; color: var(--ink); background: var(--bg); width: 11em;
+    border: calc(var(--s) * 1px) solid var(--ink); padding: calc(var(--s) * 1px) calc(var(--s) * 2px); text-align: center;
+  }
+  #ov .menu { margin: calc(var(--s) * 4px) 0; display: inline-block; text-align: left; }
+  #ov .menu div { cursor: pointer; padding-left: 1.6em; position: relative; }
+  #ov .menu div.sel { color: var(--gold); }
+  #ov .menu div.sel::before { content: ">"; position: absolute; left: 0; animation: blink .8s steps(2) infinite; }
+  #ov .hint { color: #8a84a8; }
+  #ov .stats { display: inline-grid; grid-template-columns: auto auto; gap: 0 2em; text-align: left; margin: calc(var(--s) * 4px) 0; }
+
+  #help { width: calc(320px * var(--s)); max-width: 100%; color: #8a84a8; text-align: center; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+  <div id="hud" class="px-font" hidden></div>
+  <div id="wrap">
+    <canvas id="game" width="320" height="176"></canvas>
+    <div id="fade"></div>
+    <div id="box" class="win" hidden><div id="name" class="win"></div><div id="text"></div><div id="next" hidden>v</div></div>
+    <div id="choice" class="win" hidden></div>
+    <div id="toasts"></div>
+    <div id="ov"></div>
+  </div>
+  <div id="help" class="px-font">PANAH/WASD: jalan &nbsp; Z/SPASI/ENTER: bicara &amp; lanjut &nbsp; M: musik on/off</div>
+
+<script>
+"use strict";
+/* =====================================================================
+   DASAR
+   ===================================================================== */
+const $ = (s) => document.querySelector(s);
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const T = 16, MW = 20, MH = 11;
+const cv = $("#game"), ctx = cv.getContext("2d");
+ctx.imageSmoothingEnabled = false;
+
+function fitScreen() {
+  const s = Math.max(1, Math.floor(Math.min((innerWidth - 32) / 320, (innerHeight - 140) / 176)));
+  document.documentElement.style.setProperty("--s", s);
+}
+addEventListener("resize", fitScreen);
+fitScreen();
+
+/* =====================================================================
+   AUDIO — chiptune sederhana (WebAudio, tanpa file)
+   ===================================================================== */
+let AC = null, sfxGain, musGain, muted = false, pendingMusic = null, mus = null;
+
+function initAudio() {
+  if (AC) return;
+  AC = new (window.AudioContext || window.webkitAudioContext)();
+  sfxGain = AC.createGain(); sfxGain.gain.value = 0.25; sfxGain.connect(AC.destination);
+  musGain = AC.createGain(); musGain.gain.value = 0.5; musGain.connect(AC.destination);
+  if (pendingMusic) { const m = pendingMusic; pendingMusic = null; playMusic(m); }
+}
+function tone(freq, dur, type = "square", vol = 0.3, delay = 0) {
+  if (!AC) return;
+  const o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime + delay;
+  o.type = type; o.frequency.value = freq;
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  o.connect(g); g.connect(sfxGain); o.start(t); o.stop(t + dur + 0.02);
+}
+const sfx = {
+  blip: () => tone(620, 0.03, "square", 0.12),
+  move: () => tone(440, 0.04, "square", 0.15),
+  ok:   () => { tone(660, 0.05); tone(990, 0.08, "square", 0.3, 0.05); },
+  stat: () => { tone(784, 0.07, "triangle", 0.5); tone(1175, 0.12, "triangle", 0.5, 0.07); },
+  down: () => { tone(330, 0.08, "triangle", 0.5); tone(220, 0.14, "triangle", 0.5, 0.08); },
+  bump: () => tone(110, 0.05, "square", 0.15),
+};
+
+function parseSeq(str) {
+  const SEMI = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+  return str.trim().split(/\s+/).map((tok) => {
+    const [n, l] = tok.split(":");
+    const len = Number(l) || 1;
+    if (n === "-") return [0, len];
+    const m = n.match(/^([A-G])(#?)(\d)$/);
+    return [12 * (Number(m[3]) + 1) + SEMI[m[1]] + (m[2] ? 1 : 0), len];
+  });
+}
+// Lagu orisinal; 1 token = 1/8 ketukan, ":n" = panjang n.
+const SONGS = {
+  act1: { bpm: 124,
+    lead: parseSeq("C5 E5 G5 E5 F5 E5 D5 - C5 D5 E5 G5 A5 G5 E5 - F5 A5 G5 F5 E5 G5 C5 E5 D5 E5 D5 B4 C5:4"),
+    bass: parseSeq("C3:4 F2:4 C3:4 A2:4 F2:4 C3:4 G2:4 C3:4") },
+  act2: { bpm: 84,
+    lead: parseSeq("A4 C5 E5 C5 B4:2 G4:2 A4 C5 E5 G5 F5:3 - E5 D5 C5 B4 C5:2 A4:2 B4 C5 D5 B4 A4:4"),
+    bass: parseSeq("A2:4 G2:4 A2:4 F2:4 E2:4 A2:4 G2:4 A2:4") },
+  act3: { bpm: 136,
+    lead: parseSeq("D5 D5 F5 D5 E5 C5 D5 - A4 A4 C5 A4 A#4:2 A4:2 D5 F5 A5 F5 G5 F5 E5 C5 D5 E5 C#5 E5 D5:4"),
+    bass: parseSeq("D3:2 D3:2 C3:2 C3:2 F2:2 F2:2 A#2:2 A#2:2 D3:2 D3:2 C3:2 C3:2 A2:2 A2:2 D3:4") },
+  act4: { bpm: 78,
+    lead: parseSeq("A4 C5 F5 E5 D5:2 C5:2 A#4 D5 F5 E5 C5:4 A4 C5 F5 G5 A5:2 G5 F5 E5:2 D5 E5 F5:4"),
+    bass: parseSeq("F2:4 D2:4 A#2:4 C3:4 F2:4 D2:4 C3:4 F2:4") },
+};
+function playNote(midi, t, dur, type, vol) {
+  const o = AC.createOscillator(), g = AC.createGain();
+  o.type = type; o.frequency.value = 440 * Math.pow(2, (midi - 69) / 12);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.01);
+  g.gain.setValueAtTime(vol, t + dur * 0.7); g.gain.linearRampToValueAtTime(0, t + dur);
+  o.connect(g); g.connect(musGain); o.start(t); o.stop(t + dur + 0.05);
+}
+function playMusic(name) {
+  if (!AC) { pendingMusic = name; return; }
+  if (mus && mus.name === name) return;
+  stopMusic();
+  const s = SONGS[name], t0 = AC.currentTime + 0.05;
+  mus = { name, step: 60 / s.bpm / 2, tracks: [
+    { seq: s.lead, i: 0, t: t0, type: "square", vol: 0.06 },
+    { seq: s.bass, i: 0, t: t0, type: "triangle", vol: 0.16 },
+  ] };
+  mus.timer = setInterval(() => {
+    for (const tr of mus.tracks) {
+      if (tr.t < AC.currentTime - 0.1) tr.t = AC.currentTime;
+      while (tr.t < AC.currentTime + 0.25) {
+        const [m, len] = tr.seq[tr.i], d = len * mus.step;
+        if (m) playNote(m, tr.t, d * 0.92, tr.type, tr.vol);
+        tr.t += d; tr.i = (tr.i + 1) % tr.seq.length;
+      }
+    }
+  }, 40);
+}
+function stopMusic() { if (mus) { clearInterval(mus.timer); mus = null; } }
+function toggleMute() {
+  muted = !muted;
+  if (musGain) musGain.gain.value = muted ? 0 : 0.5;
+  notify(muted ? "MUSIK: OFF" : "MUSIK: ON");
+}
+
+/* =====================================================================
+   PIXEL ART — sprite karakter 16x16 dari template teks
+   K=garis  H=rambut  S=kulit  E=mata  C=baju  P=celana/rok  L=rambut panjang
+   ===================================================================== */
+const BASE_TOP = [
+  "................",
+  ".....KKKKKK.....",
+  "....KHHHHHHK....",
+  "...KHHHHHHHHK...",
+  "..LKHHHHHHHHKL..",
+];
+const BASE_BOTTOM = [
+  "..LKCCCCCCCCKL..",
+  "..KSCCCCCCCCSK..",
+  "..KSCCCCCCCCSK..",
+  "...KCCCCCCCCK...",
+  "....KPPPPPPK....",
+];
+const BODY = {
+  down: [...BASE_TOP,
+    "..LKHSSSSSSHKL..",
+    "..LKSSESSESSKL..",
+    "..LKSSSSSSSSKL..",
+    "..LLKSSSSSSKLL..",
+    ...BASE_BOTTOM],
+  up: [...BASE_TOP,
+    "..LKHHHHHHHHKL..",
+    "..LKHHHHHHHHKL..",
+    "..LKHHHHHHHHKL..",
+    "..LLKHHHHHHKLL..",
+    ...BASE_BOTTOM],
+  side: [
+    "................",
+    ".....KKKKKK.....",
+    "....KHHHHHHK....",
+    "...KHHHHHHHHK...",
+    "..LKHHHHHHHHK...",
+    "..LKHHHHSSSSK...",
+    "..LKHHHSSSESK...",
+    "..LKHHSSSSSSK...",
+    "..LLKSSSSSSK....",
+    "..LKCCCCCCCCK...",
+    "...KCCCSSCCCK...",
+    "...KCCCSSCCCK...",
+    "...KCCCCCCCCK...",
+    "....KPPPPPPK....",
+  ],
+};
+const LEGS = [
+  ["....KPPKKPPK....", "....KKK..KKK...."],
+  ["....KPPK.KPPK...", "....KKK...KKK..."],
+  ["...KPPK.KPPK....", "...KKK...KKK...."],
+];
+const WALK = [0, 1, 0, 2];
+
+const PAL = {
+  player:  { H: "#2b2b3a", C: "#3a6fd8", P: "#2e3550" },
+  heroine: { H: "#7a3e26", C: "#e8a23a", P: "#6a4a7a", S: "#f5d0b0", long: true },
+  dimas:   { H: "#1c1c1c", C: "#4caf50", P: "#3a3a3a", S: "#c99a6e" },
+  sari:    { H: "#2a1a2a", C: "#d070b0", P: "#444466", long: true },
+  dosen:   { H: "#a0a0a0", C: "#ececec", P: "#2a2a2a", S: "#d8a880" },
+  mhs1:    { H: "#4a3020", C: "#c0504d", P: "#3a3a4a" },
+  mhs2:    { H: "#202040", C: "#8064a2", P: "#3a3a4a", long: true },
+  mhs3:    { H: "#303030", C: "#4bacc6", P: "#3a3a4a", S: "#d0a070" },
+  barista: { H: "#3a2a1a", C: "#7a4a2a", P: "#2a2a2a" },
+};
+function buildSprite(p) {
+  const col = { K: "#1a1420", E: "#1a1420", S: p.S || "#f2c9a0", H: p.H, C: p.C, P: p.P, L: p.long ? p.H : null };
+  const out = {};
+  for (const d of ["down", "up", "side"]) {
+    out[d] = LEGS.map((legs) => {
+      const c = document.createElement("canvas");
+      c.width = c.height = 16;
+      const g = c.getContext("2d");
+      [...BODY[d], ...legs].forEach((row, y) => [...row].forEach((ch, x) => {
+        const cl = col[ch];
+        if (ch !== "." && cl) { g.fillStyle = cl; g.fillRect(x, y, 1, 1); }
+      }));
+      return c;
+    });
+  }
+  return out;
+}
+const SPR = {};
+for (const k in PAL) SPR[k] = buildSprite(PAL[k]);
+
+// Gelembung emosi di atas kepala (5x5)
+const EMO = {
+  "!":   { c: "#c83030", p: ["..#..", "..#..", "..#..", ".....", "..#.."] },
+  "?":   { c: "#1a1420", p: [".###.", "...#.", "..##.", ".....", "..#.."] },
+  heart: { c: "#e0405a", p: [".#.#.", "#####", "#####", ".###.", "..#.."] },
+  "...": { c: "#1a1420", p: [".....", ".....", ".....", ".....", "#.#.#"] },
+  note:  { c: "#2f5fc8", p: ["..##.", "..#.#", "..#..", "###..", "##..."] },
+};
+
+/* =====================================================================
+   TILE & PETA
+   . lantai  # dinding  w jendela  B papan tulis  d meja kelas  c kursi
+   T meja  U meja+kartu Uno  P tanaman  C konter  J jukebox  V mesin minuman
+   S loker  L lampu  R karpet  D pintu
+   ===================================================================== */
+const SOLID = new Set("#wBdTUPCJVSL".split(""));
+const WALLISH = new Set("#wBS".split(""));
+
+const MAPS = {
+  kantin: { theme: { f1: "#d8c49a", f2: "#cfba8e", fl: "#b39d72", wall: "#e8dcc0", wallD: "#a8946c", night: false },
+    rows: [
+      "####################",
+      "#ww##ww##ww##ww##ww#",
+      "#CCCCC.....P....VV.#",
+      "#..................#",
+      "#..cTc....cUc..cTc.#",
+      "#..........c.......#",
+      "#P.................#",
+      "#..cTc.........cTc.#",
+      "#..................#",
+      "#P................P#",
+      "#########DD#########",
+    ] },
+  kelas: { theme: { f1: "#c9d2d8", f2: "#bcc6cd", fl: "#a8b3bb", wall: "#d9e4c8", wallD: "#93a080", night: false },
+    rows: [
+      "####################",
+      "#ww#BBBBBBBB##ww#ww#",
+      "#.........d........#",
+      "#..................#",
+      "#.dd..dd..dd..dd...#",
+      "#.cc..cc..cc..cc...#",
+      "#.dd..dd..dd..dd...#",
+      "#.cc..cc..cc..cc..P#",
+      "#####..##########..#",
+      "#..................#",
+      "#SSSSwwSSSSSSwwSSSS#",
+    ] },
+  kafe: { theme: { f1: "#6b4a35", f2: "#634430", fl: "#4e3524", wall: "#3a2e4a", wallD: "#241c30", night: true },
+    rows: [
+      "####################",
+      "#ww##ww##ww##ww##ww#",
+      "#..L....L....L...J.#",
+      "#.cTc..cTc.........#",
+      "#..................#",
+      "#RRRRRRRRRRRRRRRRRR#",
+      "#..................#",
+      "#CCCCCC.....cTc....#",
+      "#..................#",
+      "#P................P#",
+      "#########DD#########",
+    ] },
+};
+
+function rect(g, c, x, y, w, h) { g.fillStyle = c; g.fillRect(x, y, w, h); }
+
+function drawFloor(g, X, Y, th) {
+  rect(g, ((X + Y) / T) % 2 ? th.f1 : th.f2, X, Y, T, T);
+  rect(g, th.fl, X, Y + 15, T, 1);
+  rect(g, th.fl, X + ((Y / T) % 2 ? 4 : 11), Y, 1, 15);
+}
+function drawTile(g, rows, x, y, th) {
+  const ch = rows[y][x], X = x * T, Y = y * T;
+  const below = rows[y + 1] ? rows[y + 1][x] : "#";
+  if (WALLISH.has(ch)) {
+    rect(g, y === 0 || y === MH - 1 ? th.wallD : th.wall, X, Y, T, T);
+    if (y !== 0 && !WALLISH.has(below)) rect(g, th.wallD, X, Y + 13, T, 3);
+  } else {
+    drawFloor(g, X, Y, th);
+  }
+  switch (ch) {
+    case "#":
+      if (y > 0 && y < MH - 1) { rect(g, "rgba(0,0,0,.06)", X, Y + 4, T, 1); rect(g, "rgba(0,0,0,.06)", X, Y + 9, T, 1); }
+      break;
+    case "w":
+      rect(g, "#5a4632", X + 1, Y + 1, 14, 12);
+      rect(g, th.night ? "#1c2850" : "#8fd3ff", X + 2, Y + 2, 12, 10);
+      rect(g, "#5a4632", X + 7, Y + 2, 2, 10);
+      if (th.night) { rect(g, "#fff", X + 4, Y + 4, 1, 1); rect(g, "#ffe", X + 11, Y + 7, 1, 1); rect(g, "#f0e0a0", X + 12, Y + 3, 2, 2); }
+      else { rect(g, "#d8f2ff", X + 3, Y + 3, 3, 1); rect(g, "#d8f2ff", X + 10, Y + 3, 3, 1); }
+      break;
+    case "B":
+      rect(g, "#8a8a8a", X, Y + 2, T, 11);
+      rect(g, "#f4f4f0", X, Y + 3, T, 9);
+      if (x % 3 === 0) rect(g, "#3a6fd8", X + 3, Y + 6, 9, 1);
+      if (x % 2 === 1) rect(g, "#c83030", X + 2, Y + 9, 6, 1);
+      break;
+    case "d":
+      rect(g, "#7a5028", X + 1, Y + 3, 14, 9);
+      rect(g, "#a0703c", X + 1, Y + 3, 14, 7);
+      rect(g, "#5a3a1c", X + 2, Y + 12, 2, 4); rect(g, "#5a3a1c", X + 12, Y + 12, 2, 4);
+      break;
+    case "c":
+      rect(g, "#4a3420", X + 4, Y + 2, 8, 4);
+      rect(g, "#6b4a2a", X + 4, Y + 6, 8, 6);
+      rect(g, "#4a3420", X + 5, Y + 12, 1, 3); rect(g, "#4a3420", X + 10, Y + 12, 1, 3);
+      break;
+    case "T": case "U":
+      rect(g, "#5a3a1c", X + 1, Y + 3, 14, 10);
+      rect(g, "#8a5a30", X + 1, Y + 2, 14, 9);
+      rect(g, "#a0703c", X + 2, Y + 3, 12, 1);
+      if (ch === "U") {
+        rect(g, "#c83030", X + 3, Y + 4, 3, 4); rect(g, "#2f5fc8", X + 8, Y + 5, 3, 4);
+        rect(g, "#d8a020", X + 5, Y + 7, 3, 3); rect(g, "#fff", X + 9, Y + 6, 1, 1);
+      }
+      break;
+    case "P":
+      rect(g, "#a0522d", X + 5, Y + 10, 6, 6);
+      rect(g, "#3a8a3a", X + 3, Y + 2, 10, 9);
+      rect(g, "#5ab05a", X + 5, Y + 3, 3, 3); rect(g, "#5ab05a", X + 9, Y + 6, 2, 2);
+      break;
+    case "C":
+      rect(g, "#8a6a4a", X, Y + 6, T, 10);
+      rect(g, "#c8c8d0", X, Y + 2, T, 5);
+      rect(g, "#a0a0a8", X, Y + 6, T, 1);
+      break;
+    case "J":
+      rect(g, "#4a1a6a", X + 2, Y + 1, 12, 15);
+      rect(g, "#8a3aaa", X + 3, Y + 2, 10, 6);
+      [["#ff5a5a", 4], ["#ffd84a", 7], ["#5affa0", 10]].forEach(([c, dx]) => rect(g, c, X + dx, Y + 10, 2, 2));
+      break;
+    case "V":
+      rect(g, "#c83a3a", X + 1, Y, 14, 16);
+      rect(g, "#9fe0ff", X + 3, Y + 2, 7, 9);
+      rect(g, "#ffd84a", X + 11, Y + 4, 2, 2); rect(g, "#222", X + 4, Y + 13, 8, 2);
+      break;
+    case "S":
+      rect(g, "#7a8a9a", X, Y, T, T);
+      rect(g, "#5a6a7a", X + 7, Y, 2, T);
+      rect(g, "#3a4a5a", X + 3, Y + 3, 3, 1); rect(g, "#3a4a5a", X + 10, Y + 3, 3, 1);
+      break;
+    case "L":
+      rect(g, "#333", X + 7, Y + 5, 2, 11);
+      rect(g, "#f0d080", X + 4, Y + 1, 8, 5);
+      rect(g, "rgba(255,220,140,.18)", X, Y + 6, T, 10);
+      break;
+    case "R":
+      rect(g, "#7a2a3a", X, Y, T, T);
+      rect(g, "#a84a5a", X, Y + 2, T, 1); rect(g, "#a84a5a", X, Y + 13, T, 1);
+      rect(g, "#c8a050", X + 7, Y + 7, 2, 2);
+      break;
+    case "D":
+      rect(g, "#3a2a1a", X, Y, T, T);
+      rect(g, "#5a4a3a", X + 1, Y + 1, 14, 14);
+      break;
+  }
+}
+
+let map = null, mapCache = null;
+function setMap(name) {
+  map = MAPS[name];
+  mapCache = document.createElement("canvas");
+  mapCache.width = MW * T; mapCache.height = MH * T;
+  const g = mapCache.getContext("2d");
+  for (let y = 0; y < MH; y++) for (let x = 0; x < MW; x++) drawTile(g, map.rows, x, y, map.theme);
+  if (map.theme.night) rect(g, "rgba(10,10,40,.25)", 0, 0, MW * T, MH * T);
+}
+
+/* =====================================================================
+   STATE (padanan core/variables.rpy & core/systems.rpy)
+   ===================================================================== */
+const S = {};
+function resetState() {
+  Object.assign(S, {
+    affection: 0, trust: 0, curiosity: 0, class_rep: 50,
+    hesitation: 0, impulsive: 0, status: "Stranger",
+    kp: null, tone: 0, final: null,
+    player: "Raka", heroine: "Nayla", f: {},
+  });
+}
+const STAT_LABEL = { affection: "AFF", trust: "TRU", curiosity: "CUR", class_rep: "REP" };
+const STAT_COLOR = { affection: "#ff7a90", trust: "#7fd1b9", curiosity: "#b39cff", class_rep: "#e0c070" };
+
+function changeStat(name, amount, notifyPlayer = true) {
+  S[name] = Math.max(0, Math.min(100, S[name] + amount));
+  updateHud();
+  if (notifyPlayer && amount) {
+    notify(`${STAT_LABEL[name]} ${amount > 0 ? "+" : ""}${amount}`, STAT_COLOR[name]);
+    amount > 0 ? sfx.stat() : sfx.down();
+  }
+}
+function impulsiveChoice(penalty = 5) { S.impulsive++; changeStat("trust", -penalty); }
+function setStatus(st) { S.status = st; updateHud(); notify("STATUS: " + st, "#ffd84a"); sfx.stat(); }
+
+const TRUE_AFFECTION_MIN = 35, TRUE_TRUST_MIN = 35;
+function resolveEnding() {
+  if (S.final === "confess" && S.affection >= TRUE_AFFECTION_MIN && S.trust >= TRUE_TRUST_MIN) return "true";
+  if (S.final === "confess" || S.final === "hold") return "bittersweet";
+  return "regret";
+}
+
+/* =====================================================================
+   ENTITAS: pemain & NPC
+   ===================================================================== */
+const DIRV = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+const P = { x: 0, y: 0, dir: "down", moving: false, t: 0, tx: 0, ty: 0, pal: "player" };
+let npcs = [], objects = [];
+
+function NPC(id, x, y, dir, talk, marker) { return { id, pal: id, x, y, dir, talk, marker }; }
+function OBJ(tiles, act, marker) { return { tiles, act, marker }; }
+const npc = (id) => npcs.find((n) => n.id === id);
+
+function faceToward(e, target) {
+  const dx = target.x - e.x, dy = target.y - e.y;
+  e.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
+}
+function emote(id, sym, ms = 1600) {
+  const e = id === "player" ? P : npc(id);
+  if (e) e.emote = { sym, until: performance.now() + ms };
+}
+function walkable(x, y) {
+  if (x < 0 || y < 0 || x >= MW || y >= MH) return false;
+  if (SOLID.has(map.rows[y][x])) return false;
+  return !npcs.some((n) => n.x === x && n.y === y);
+}
+
+/* =====================================================================
+   INPUT
+   mode: title | walk | busy | dialog | choice | overlay | ending
+   ===================================================================== */
+let mode = "title";
+const held = [];
+const KEYDIR = {
+  ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right",
+  w: "up", s: "down", a: "left", d: "right", W: "up", S: "down", A: "left", D: "right",
+};
+let typing = null, waiter = null, choiceCtl = null, overlayConfirm = null;
+
+addEventListener("keydown", (e) => {
+  initAudio();
+  const k = e.key;
+  if (mode === "title") return titleKey(e);
+  if (k.startsWith("Arrow") || k === " ") e.preventDefault();
+  if (k === "m" || k === "M") return toggleMute();
+
+  const dir = KEYDIR[k];
+  if (dir && !held.includes(dir)) held.push(dir);
+  const confirm = (k === "z" || k === "Z" || k === "Enter" || k === " ") && !e.repeat;
+
+  if (mode === "dialog" && confirm) advance();
+  else if (mode === "choice" && choiceCtl) {
+    if (dir === "up" || dir === "left") choiceCtl.move(-1);
+    else if (dir === "down" || dir === "right") choiceCtl.move(1);
+    else if (confirm) choiceCtl.pick();
+  }
+  else if (mode === "overlay" && confirm && overlayConfirm) overlayConfirm();
+  else if (mode === "ending" && confirm) titleScreen();
+  else if (mode === "walk" && confirm) interact();
+});
+addEventListener("keyup", (e) => {
+  const dir = KEYDIR[e.key];
+  if (dir) held.splice(held.indexOf(dir) >>> 0, 1);
+});
+addEventListener("blur", () => (held.length = 0));
+$("#wrap").addEventListener("click", (e) => {
+  initAudio();
+  if (e.target.closest("#choice") || (mode === "title")) return;
+  if (mode === "dialog") advance();
+  else if (mode === "overlay" && overlayConfirm) overlayConfirm();
+  else if (mode === "ending") titleScreen();
+});
+
+function advance() {
+  if (typing) return typing.finish();
+  if (waiter) { const r = waiter; waiter = null; r(); }
+}
+
+function interact() {
+  if (P.moving) return;
+  const [dx, dy] = DIRV[P.dir], tx = P.x + dx, ty = P.y + dy;
+  const n = npcs.find((o) => o.x === tx && o.y === ty);
+  if (n && n.talk) { faceToward(n, P); return run(n.talk); }
+  const o = objects.find((o) => o.tiles.some(([x, y]) => x === tx && y === ty));
+  if (o) run(o.act);
+}
+
+async function run(fn) {
+  mode = "busy";
+  await fn();
+  $("#box").hidden = true;
+  if (mode === "busy") mode = "walk";
+  updateHud();
+}
+
+/* =====================================================================
+   DIALOG & PILIHAN (padanan say / menu di Ren'Py)
+   ===================================================================== */
+const CH = {
+  p:       { name: () => S.player, color: "#7fb3ff" },
+  h:       { name: () => S.heroine, color: "#ffb37f" },
+  c1:      { name: () => "Dimas", color: "#8fe08a" },
+  c2:      { name: () => "Sari", color: "#f0a0d8" },
+  dosen:   { name: () => "Pak Hendra", color: "#dddddd" },
+  m1:      { name: () => "Teman Sekelas", color: "#e0a0a0" },
+  m2:      { name: () => "Teman Sekelas", color: "#c0a8e8" },
+  m3:      { name: () => "Teman Sekelas", color: "#a0d8e8" },
+  barista: { name: () => "Barista", color: "#e0b890" },
+  batin:   { name: () => "", cls: "batin" },
+  sys:     { name: () => "", cls: "sys" },
+  n:       { name: () => "" },
+};
+
+function showLine(who, text) {
+  const c = CH[who];
+  mode = "dialog";
+  $("#box").hidden = false;
+  const nm = c.name();
+  $("#name").textContent = nm;
+  $("#name").style.color = c.color || "#fff";
+  $("#name").hidden = !nm;
+  const el = $("#text");
+  el.className = c.cls || "";
+  const full = c.cls === "batin" ? `(${text})` : text;
+  $("#next").hidden = true;
+  return new Promise((res) => {
+    let i = 0;
+    el.textContent = "";
+    const id = setInterval(() => {
+      i++;
+      el.textContent = full.slice(0, i);
+      if (i % 2 === 0 && full[i - 1] !== " ") sfx.blip();
+      if (i >= full.length) done();
+    }, 24);
+    function done() { clearInterval(id); el.textContent = full; typing = null; res(); }
+    typing = { finish: done };
+  });
+}
+
+async function say(who, text) {
+  await showLine(who, text);
+  $("#next").hidden = false;
+  await new Promise((r) => (waiter = r));
+  mode = "busy";
+}
+
+async function choose(opts, { caption, cards } = {}) {
+  opts = opts.map((o) => (typeof o === "string" ? { text: o, value: o } : o));
+  if (caption) await showLine(caption[0], caption[1]);
+  $("#next").hidden = true;
+  const box = $("#choice");
+  box.className = "win" + (cards ? " cards" : "");
+  box.innerHTML = "";
+  return new Promise((res) => {
+    let cur = 0;
+    const els = opts.map((o) => {
+      const el = document.createElement("div");
+      el.className = "opt" + (o.card ? " c-" + o.card : "");
+      el.textContent = o.text;
+      box.appendChild(el);
+      return el;
+    });
+    const sel = (i) => { cur = i; els.forEach((e, j) => e.classList.toggle("sel", j === i)); };
+    const pick = () => { sfx.ok(); box.hidden = true; choiceCtl = null; mode = "busy"; res(opts[cur].value); };
+    els.forEach((el, i) => {
+      el.onmouseenter = () => sel(i);
+      el.onclick = (e) => { e.stopPropagation(); sel(i); pick(); };
+    });
+    choiceCtl = { move: (d) => { sel((cur + d + opts.length) % opts.length); sfx.move(); }, pick };
+    sel(0);
+    box.hidden = false;
+    mode = "choice";
+  });
+}
+
+function notify(msg, color = "#f4f0e6") {
+  const t = document.createElement("div");
+  t.className = "toast win";
+  t.style.color = color;
+  t.textContent = msg;
+  $("#toasts").appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+function shake() {
+  const w = $("#wrap");
+  w.classList.remove("shake"); void w.offsetWidth; w.classList.add("shake");
+  tone(90, 0.2, "square", 0.3);
+}
+
+/* =====================================================================
+   HUD
+   ===================================================================== */
+function segBar(v, c) {
+  let s = `<span class="seg" style="--c:${c}">`;
+  for (let i = 0; i < 10; i++) s += `<i class="${v >= (i + 1) * 10 - 5 ? "on" : ""}"></i>`;
+  return s + "</span>";
+}
+function updateHud() {
+  const A = ACTS[actIndex];
+  if (!A) return;
+  const obj = A.objective ? A.objective() : "";
+  $("#hud").innerHTML = `
+    <div>
+      <div class="where"><b>${A.sem}</b> ${A.place}</div>
+      <div class="obj">${obj ? "> " + obj : ""}</div>
+      <div>STATUS: ${S.status}</div>
+    </div>
+    <div class="bars">
+      ${["affection", "trust", "curiosity", "class_rep"].map((k) =>
+        `<span style="color:${STAT_COLOR[k]}">${STAT_LABEL[k]}</span>${segBar(S[k], STAT_COLOR[k])}`).join("")}
+    </div>`;
+}
+
+/* =====================================================================
+   GAME LOOP
+   ===================================================================== */
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(50, now - last);
+  last = now;
+  update(dt);
+  render(now);
+  requestAnimationFrame(loop);
+}
+function update(dt) {
+  if (!map) return;
+  if (P.moving) {
+    P.t += dt / 150;
+    if (P.t >= 1) {
+      P.x = P.tx; P.y = P.ty; P.moving = false; P.t = 0;
+      const A = ACTS[actIndex];
+      const ev = A.stepEvent && A.stepEvent(P.x, P.y);
+      if (ev) { run(ev); return; }
+    }
+  }
+  if (!P.moving && mode === "walk" && held.length) {
+    const dir = held[held.length - 1];
+    const [dx, dy] = DIRV[dir];
+    P.dir = dir;
+    if (walkable(P.x + dx, P.y + dy)) {
+      P.tx = P.x + dx; P.ty = P.y + dy; P.moving = true; P.t = 0;
+    } else if (!P.bumped) { sfx.bump(); P.bumped = true; setTimeout(() => (P.bumped = false), 250); }
+  }
+}
+
+function drawPattern(pat, color, x, y) {
+  pat.forEach((row, j) => [...row].forEach((ch, i) => { if (ch === "#") rect(ctx, color, x + i, y + j, 1, 1); }));
+}
+function drawEntity(e, now) {
+  const fx = e === P && P.moving ? P.x + (P.tx - P.x) * P.t : e.x;
+  const fy = e === P && P.moving ? P.y + (P.ty - P.y) * P.t : e.y;
+  const X = Math.round(fx * T), Y = Math.round(fy * T);
+  const key = e.dir === "left" || e.dir === "right" ? "side" : e.dir;
+  const frame = e === P && P.moving ? WALK[Math.floor(now / 110) % 4] : 0;
+  const img = SPR[e.pal][key][frame];
+  rect(ctx, "rgba(0,0,0,.22)", X + 3, Y + 14, 10, 2);
+  if (e.dir === "left") {
+    ctx.save(); ctx.translate(X + T, Y - 2); ctx.scale(-1, 1); ctx.drawImage(img, 0, 0); ctx.restore();
+  } else ctx.drawImage(img, X, Y - 2);
+
+  if (e.emote && now < e.emote.until) {
+    const em = EMO[e.emote.sym];
+    rect(ctx, "#1a1420", X + 3, Y - 14, 11, 10);
+    rect(ctx, "#fff", X + 4, Y - 13, 9, 8);
+    rect(ctx, "#fff", X + 6, Y - 5, 2, 2);
+    drawPattern(em.p, em.c, X + 6, Y - 12);
+  }
+  return [X, Y];
+}
+function drawMarker(X, Y, now) {
+  const b = Math.round(Math.sin(now / 160) * 1.5);
+  rect(ctx, "#1a1420", X + 6, Y - 14 + b, 4, 9);
+  rect(ctx, "#ffd84a", X + 7, Y - 13 + b, 2, 5);
+  rect(ctx, "#ffd84a", X + 7, Y - 7 + b, 2, 1);
+}
+function render(now) {
+  rect(ctx, "#000", 0, 0, cv.width, cv.height);
+  if (!map) return;
+  ctx.drawImage(mapCache, 0, 0);
+  const A = ACTS[actIndex];
+
+  // titik observasi (Act II)
+  if (A.spots) A.spots().forEach(({ x, y }) => {
+    const on = Math.floor(now / 300) % 2;
+    const X = x * T + 8, Y = y * T + 8;
+    rect(ctx, on ? "#ffd84a" : "#fff", X - 1, Y - 4, 2, 8);
+    rect(ctx, on ? "#ffd84a" : "#fff", X - 4, Y - 1, 8, 2);
+  });
+
+  const ents = [...npcs, P].sort((a, b) => (a === P && P.moving ? Math.max(P.y, P.ty) : a.y) - (b === P && P.moving ? Math.max(P.y, P.ty) : b.y));
+  for (const e of ents) {
+    const [X, Y] = drawEntity(e, now);
+    if (e !== P && e.marker && e.marker() && !(e.emote && now < e.emote.until)) drawMarker(X, Y, now);
+  }
+  for (const o of objects) if (o.marker && o.marker()) {
+    const [x, y] = o.tiles[0];
+    drawMarker(x * T, y * T, now);
+  }
+}
+
+/* =====================================================================
+   BABAK (padanan story/*.rpy)
+   ===================================================================== */
+let actIndex = 0;
+
+// ---------- Mini-game Uno (minigames/uno.rpy) ----------
+const UNO_COLORS = ["Merah", "Kuning", "Hijau", "Biru"];
+const UNO_ACTIONS = ["Skip", "Reverse"];
+const UNO_WILDS = ["Wild", "Draw 4"];
+function unoBuildDeck() {
+  const deck = [];
+  for (const c of UNO_COLORS) {
+    for (let n = 0; n < 10; n++) deck.push(`${c} ${n}`);
+    for (const a of UNO_ACTIONS) deck.push(`${c} ${a}`);
+  }
+  for (let i = 0; i < 4; i++) deck.push(...UNO_WILDS);
+  for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; }
+  return deck;
+}
+function unoCardType(card) {
+  if (UNO_WILDS.includes(card)) return "wild";
+  if (UNO_ACTIONS.includes(card.split(" ").slice(1).join(" "))) return "action";
+  return "number";
+}
+function unoCardOption(card) {
+  if (card === "Wild") return { text: "WILD", value: card, card: "Wild" };
+  if (card === "Draw 4") return { text: "+4", value: card, card: "Wild" };
+  const [color, v] = card.split(" ");
+  return { text: v === "Reverse" ? "REV" : v.toUpperCase(), value: card, card: color };
+}
+
+async function unoMinigame() {
+  const deck = unoBuildDeck();
+  const hand = Array.from({ length: 5 }, () => deck.pop());
+  await say("n", `Kartu dibagikan. ${S.heroine} duduk tepat di seberangmu.`);
+  for (let r = 1; r <= 3; r++) {
+    const card = await choose(hand.map(unoCardOption), { caption: ["sys", `RONDE ${r}/3 - Pilih kartu yang mau dimainkan.`], cards: true });
+    hand.splice(hand.indexOf(card), 1);
+    hand.push(deck.pop());
+    const type = unoCardType(card);
+    if (type === "wild") await unoEventWild(card);
+    else if (type === "action") await unoEventAction(card);
+    else await unoEventNumber(card);
+  }
+  await say("n", "Permainan selesai. Tawa masih tersisa di meja.");
+}
+async function unoEventWild(card) {
+  await say("p", `${card}! Rasain.`);
+  emote("heroine", "!");
+  await say("h", "Ih! Kamu sengaja ya?");
+  const c = await choose(["Tatap matanya sambil nyengir.", "Pura-pura polos."]);
+  if (c.startsWith("Tatap")) {
+    changeStat("affection", 5);
+    emote("heroine", "?");
+    await say("h", "...Apa?");
+    await say("batin", "Dia buang muka duluan. Aku menang dua kali.");
+  } else {
+    changeStat("trust", 3);
+    await say("h", "Dasar.");
+  }
+}
+async function unoEventAction(card) {
+  await say("p", `${card}.`);
+  await say("h", "Hmm. Eh, kamu dari dulu emang di kelas ini?");
+  const c = await choose(["Cerita sedikit tentang diri sendiri.", "Balik tanya tentang kelas lamanya."]);
+  if (c.startsWith("Cerita")) {
+    changeStat("trust", 5);
+    await say("h", "Oh gitu. Aku kira kamu tipe pendiam.");
+  } else {
+    changeStat("trust", 3);
+    changeStat("affection", 2);
+    await say("h", "Bubar. Ya udah, sekarang di sini aja.");
+  }
+}
+async function unoEventNumber(card) {
+  await say("p", `${card}.`);
+  await say("c1", `Main aman mulu, ${S.player}.`);
+  changeStat("curiosity", 2, false);
+}
+
+async function unoScene() {
+  faceToward(P, npc("heroine"));
+  await say("h", "Kamu jago Uno? Aku nggak suka kalah, loh.");
+  await unoMinigame();
+  emote("heroine", "note");
+  await say("h", "Lumayan juga kamu. Lain kali aku balas.");
+  await say("batin", "Tatapannya barusan... dia juga memperhatikanku?");
+  setStatus("Casual Acquaintance");
+  S.f.uno = true;
+  await nextAct();
+}
+
+// ---------- Act I ----------
+const ACT1 = {
+  sem: "SEMESTER 3", title: "Pertemuan & Papan Kartu Uno", place: "Kantin Kampus",
+  map: "kantin", music: "act1", start: [9, 9, "up"],
+  npcs: () => [
+    NPC("dimas", 10, 4, "right", async () => {
+      if (S.f.invited) return say("c1", "Ayo, kartunya udah di meja! Berdiri di depan meja terus periksa.");
+      await say("c1", `${S.player}! Sini, kurang satu orang buat Uno.`);
+      await say("c2", "Yang anak pindahan juga ikut, nih.");
+      emote("heroine", "...");
+      await say("batin", "Ikut duduk berarti duduk dekat dia. Menolak berarti aman... tapi kosong lagi.");
+      const c = await choose([
+        { text: "Ikut gabung main Uno.", value: "join" },
+        { text: "Ragu, bilang mau ngerjain tugas dulu.", value: "hes" },
+      ]);
+      if (c === "join") {
+        changeStat("curiosity", 5);
+        await say("p", "Gas. Siapin kartunya.");
+      } else {
+        S.hesitation++;
+        await say("p", "Eh... aku nyusul deh.");
+        await say("c1", "Halah, tugas mulu. Duduk!");
+        await say("n", "Dimas menarik kursi. Tidak ada pilihan lain.");
+      }
+      S.f.invited = true;
+    }, () => !S.f.invited),
+    NPC("heroine", 12, 4, "left", async () => {
+      if (!S.f.invited) return say("n", "Anak pindahan itu melirik sebentar, lalu kembali ke ponselnya.");
+      await unoScene();
+    }, () => S.f.invited),
+    NPC("sari", 11, 5, "up", () => say("c2", "Dimas kalau kalah suka ngambek. Hati-hati, ya.")),
+    NPC("mhs1", 3, 7, "right", () => say("m1", "Kelas gabungan gini rame ya. Banyak muka baru.")),
+  ],
+  objects: () => [
+    OBJ([[11, 4]], async () => {
+      if (!S.f.invited) return say("n", "Setumpuk kartu Uno di atas meja. Punya siapa nih?");
+      await unoScene();
+    }),
+    OBJ([[16, 2], [17, 2]], () => say("n", "Mesin minuman. Isi dompet pas-pasan... nanti saja.")),
+    OBJ([[1, 2], [2, 2], [3, 2], [4, 2], [5, 2]], () => say("n", "Ibu kantin sedang sibuk menggoreng tempe. Wanginya bikin lapar.")),
+  ],
+  objective: () => (!S.f.invited ? "Hampiri Dimas di meja tengah" : `Main Uno: bicara dengan ${S.heroine}`),
+  async enter() {
+    await say("n", "Semester 3. Kelas kami bertambah wajah baru - sisa dari kelas yang dibubarkan.");
+    await say("batin", "Satu nama yang entah kenapa langsung nempel di kepala...");
+    await say("sys", "[PANAH/WASD] jalan   [Z/SPASI] bicara & periksa. Ikuti tanda ! kuning.");
+  },
+};
+
+// ---------- Act II ----------
+const GLANCES = [
+  { x: 5, y: 3, text: "Dari sini kelihatan: dia tertawa dengan teman di barisan depan." },
+  { x: 13, y: 3, text: "Dia menopang dagu, menatap jendela saat dosen menjelaskan." },
+  { x: 17, y: 5, text: "Dia mengetuk-ngetuk pulpen, kelihatan bosan." },
+];
+const glanceCount = () => GLANCES.filter((_, i) => S.f["g" + i]).length;
+
+async function apaLoh() {
+  S.f.apaloh = true;
+  const her = npc("heroine");
+  faceToward(P, her);
+  await say("n", "Koridor lantai dua. Aku menatap terlalu lama.");
+  faceToward(her, P);
+  shake();
+  emote("heroine", "?", 2500);
+  await say("h", "Apa loh?");
+  await say("batin", "Dua kata. Ketus. Tapi kenapa malah bikin jantung nggak karuan?");
+  const c = await choose([
+    { text: "\"Nggak, cuma kepikiran sesuatu.\" (aman)", value: "safe" },
+    { text: "\"Kamu beda aja hari ini.\" (impulsif)", value: "impulsive" },
+    { text: "Senyum kecil, lalu pergi.", value: "leave" },
+  ], { caption: ["batin", "Jawab apa?"] });
+  if (c === "safe") {
+    changeStat("trust", 3);
+    await say("h", "Hmm. Aneh.");
+  } else if (c === "impulsive") {
+    impulsiveChoice();
+    changeStat("curiosity", 5);
+    emote("heroine", "!");
+    await say("h", "...Hah? Apaan sih.");
+  } else {
+    changeStat("curiosity", 8);
+    S.hesitation++;
+    await say("n", "Kamu tersenyum kecil, lalu berjalan melewatinya.");
+  }
+  await say("batin", "\"Apa loh?\" - terngiang terus sampai semester 5 berakhir.");
+  changeStat("curiosity", 10);
+  await nextAct();
+}
+
+const ACT2 = {
+  sem: "SEMESTER 4-5", title: "Jeda, Tatapan, dan \"Apa Loh\"", place: "Kelas & Koridor",
+  map: "kelas", music: "act2", start: [8, 3, "down"],
+  npcs: () => [
+    NPC("heroine", 11, 5, "up", () => say("batin", "Nyapa? ...Nggak. Nggak sekarang.")),
+    NPC("mhs1", 3, 5, "up", () => say("m1", "Ssst, dosennya bentar lagi masuk.")),
+    NPC("mhs2", 7, 7, "up", () => say("m2", "Kamu sama anak pindahan itu dulu sering main Uno bareng, kan? Kok sekarang diem-dieman?")),
+    NPC("mhs3", 15, 5, "up", () => say("m3", "Tugas Statistika udah? Aku nyontek dikit dong.")),
+  ],
+  objects: () => [
+    OBJ([4, 5, 6, 7, 8, 9, 10, 11].map((x) => [x, 1]), () => say("n", "Papan tulis penuh rumus Statistika. Kepalaku malah penuh hal lain.")),
+  ],
+  spots: () => GLANCES.filter((_, i) => !S.f["g" + i]),
+  objective: () => (glanceCount() < 3 ? `Berdiri di titik bintang untuk mengamati (${glanceCount()}/3)` : "Keluar ke koridor"),
+  async enter() {
+    await say("n", "Entah sejak kapan, kami jarang bicara lagi. Tidak ada pertengkaran. Hanya... jeda.");
+    setStatus("Distant Glances");
+    await say("sys", "Berdirilah di titik bintang yang berkedip untuk mengamati dari jauh.");
+  },
+  stepEvent(x, y) {
+    const i = GLANCES.findIndex((g) => g.x === x && g.y === y);
+    if (i >= 0 && !S.f["g" + i]) return async () => {
+      S.f["g" + i] = true;
+      faceToward(P, npc("heroine"));
+      await say("n", GLANCES[i].text);
+      const c = await choose(["Perhatikan diam-diam.", "Alihkan pandangan."]);
+      if (c.startsWith("Perhatikan")) {
+        changeStat("curiosity", 5);
+        await say("batin", "Kenapa aku nggak bisa berhenti lihat?");
+      } else {
+        S.hesitation++;
+        await say("batin", "Sudahlah. Bukan urusanku.");
+      }
+      if (glanceCount() === 3) {
+        await say("n", `Bel berbunyi. ${S.heroine} keluar kelas lebih dulu.`);
+        Object.assign(npc("heroine"), { x: 12, y: 9, dir: "left" });
+      }
+    };
+    if (y === 9 && glanceCount() === 3 && !S.f.apaloh) return apaLoh;
+    return null;
+  },
+};
+
+// ---------- Act III ----------
+const ACT3 = {
+  sem: "SEMESTER 6", title: "Mandat Ketua Kelas & Konflik KP", place: "Ruang Kelas",
+  map: "kelas", music: "act3", start: [8, 3, "up"],
+  npcs: () => [
+    NPC("dosen", 9, 2, "down", () => say("dosen", "Saya serahkan ke kamu, Ketua. Yang adil, ya.")),
+    NPC("dimas", 2, 5, "up", async () => {
+      await say("c1", `Kelompok kami duluan daftar, ${S.player}. Jangan pilih kasih, ya.`);
+      S.f.heardA = true;
+    }, () => !S.f.heardA),
+    NPC("heroine", 11, 5, "up", async () => {
+      await say("h", "Gimana nih ketua, tolong dong apapun penilaian kamu aku anggap sebagai adil!");
+      await say("batin", "Setelah dua semester asing, dia datang padaku. Dan dia bilang... akan menerima apapun keputusanku.");
+      S.f.heardB = true;
+    }, () => !S.f.heardB),
+    NPC("mhs2", 7, 7, "up", () => say("m2", "Ketua, cepetan diputusin dong. Grup kelas udah rame.")),
+    NPC("mhs3", 14, 7, "up", () => say("m3", "Aku sih ikut aja, asal nggak ribut.")),
+  ],
+  objects: () => [
+    OBJ([4, 5, 6, 7, 8, 9, 10, 11].map((x) => [x, 1]), async () => {
+      if (S.f.decided) return;
+      if (!(S.f.heardA && S.f.heardB)) return say("n", "Papan tulis: 'TOPIK KP - BELUM DIPUTUSKAN'. Dengar dulu kedua kelompok.");
+      await decideKP();
+    }, () => S.f.heardA && S.f.heardB && !S.f.decided),
+  ],
+  objective: () => {
+    const n = (S.f.heardA ? 1 : 0) + (S.f.heardB ? 1 : 0);
+    return n < 2 ? `Dengar pendapat kedua kelompok (${n}/2)` : "Ambil keputusan di papan tulis";
+  },
+  async enter() {
+    await say("dosen", `Mulai semester ini, ketua kelas kalian ${S.player}. Urusan pembagian topik KP, koordinasikan lewat dia.`);
+    await say("batin", "Ketua kelas. Tanggung jawab yang nggak pernah kuminta.");
+    await say("n", `Dua kelompok berebut topik KP yang sama. Salah satunya kelompok ${S.heroine}.`);
+  },
+};
+
+async function decideKP() {
+  S.f.decided = true;
+  S.kp = await choose([
+    { text: `Menangkan kelompok ${S.heroine}.`, value: "her_side" },
+    { text: "Putuskan dengan undian terbuka di depan kelas.", value: "neutral" },
+    { text: "Menangkan kelompok lain (yang mendaftar duluan).", value: "other_side" },
+  ], { caption: ["batin", "Netralitas ketua kelas, atau keberpihakan hati?"] });
+
+  if (S.kp === "her_side") {
+    changeStat("trust", 20); changeStat("affection", 15); changeStat("class_rep", -15);
+    emote("heroine", "heart");
+    await say("h", "Serius? Makasih, ketua!");
+    emote("dimas", "...");
+    await say("c1", "...Oke. Aku catat, ya.");
+  } else if (S.kp === "neutral") {
+    changeStat("trust", 12); changeStat("affection", 5); changeStat("class_rep", 15);
+    await say("n", "Undian jatuh ke kelompok Dimas.");
+    await say("h", "Yah. Tapi adil sih. Aku kan udah janji terima.");
+    emote("heroine", "note");
+    await say("h", "Kamu ternyata bisa diandalkan, ya.");
+  } else {
+    changeStat("trust", 5); changeStat("class_rep", 10);
+    S.hesitation++;
+    emote("heroine", "...");
+    await say("h", "...Oke. Aku bilang aku terima, kan.");
+  }
+  if (S.trust >= 15) {
+    await say("batin", "Dinding yang berdiri sejak semester 4 - rasanya mulai retak.");
+    setStatus("Trusted Ally");
+  }
+  await nextAct();
+}
+
+// ---------- Act IV ----------
+const TONE_TOPICS = [
+  ["Kata orang Gemini itu punya dua kepribadian. Menurutmu aku yang mana?", "playful"],
+  ["Kadang aku ngerasa rame di luar, tapi sepi di dalam. Kamu pernah gitu?", "deep"],
+  ["Aku takut abis lulus semua orang jalan sendiri-sendiri.", "supportive"],
+];
+const TONE_OPTIONS = [
+  { text: "Bercanda balik dengan santai", value: "playful" },
+  { text: "Jujur menceritakan isi hati", value: "deep" },
+  { text: "Menenangkan dan meyakinkan", value: "supportive" },
+];
+
+async function cafeTalk() {
+  if (S.f.talked) return;
+  S.f.talked = true;
+  faceToward(P, npc("heroine"));
+  await say("h", "Eh, kamu Pisces kan? Katanya Gemini sama Pisces itu... ribet.");
+  await say("p", "Ribet gimana?");
+  emote("heroine", "note");
+  await say("h", "Ya kayak kita. Hehe.");
+  await say("sys", "Pilih nada jawaban yang paling cocok dengan perasaannya.");
+
+  for (const [line, expected] of TONE_TOPICS) {
+    await say("h", line);
+    const picked = await choose(TONE_OPTIONS);
+    if (picked === expected) {
+      S.tone++;
+      changeStat("affection", 8); changeStat("trust", 5);
+      emote("heroine", "heart");
+      await say("h", "...Iya. Kamu ngerti banget.");
+    } else {
+      changeStat("affection", 2);
+      emote("heroine", "...");
+      await say("h", "Hmm, gitu ya.");
+    }
+  }
+
+  await say("n", "Lagu di kafe berganti. Lagu yang pernah dia kirim jam dua pagi.");
+  await say("batin", "Sekarang, atau tidak sama sekali? Atau... nanti saja?");
+  S.final = await choose([
+    { text: "Nyatakan perasaan dengan jujur.", value: "confess" },
+    { text: "Simpan perasaan, jaga persahabatan ini.", value: "hold" },
+    { text: "Nanti saja... setelah skripsi.", value: "delay" },
+  ], { caption: ["batin", "Apa yang akan kulakukan?"] });
+  if (S.final === "delay") S.hesitation += 2;
+  if (S.final !== "confess" && S.hesitation >= 5) S.final = "delay";
+
+  await finishGame();
+}
+
+const ACT4 = {
+  sem: "SEMESTER 7", title: "Dinamika Zodiak & Fase \"Warm Friends\"", place: "Kafe - Malam",
+  map: "kafe", music: "act4", start: [9, 9, "up"],
+  npcs: () => [
+    NPC("heroine", 9, 3, "left", cafeTalk, () => !S.f.talked),
+    NPC("barista", 3, 6, "down", () => say("barista", "Kopi susu gula aren lagi? Udah kuhafal pesananmu.")),
+    NPC("mhs1", 12, 7, "right", () => say("m1", "Eh, ketua! Lagi nunggu seseorang ya? Hehe.")),
+    NPC("mhs2", 14, 7, "left", () => say("m2", "Kafe ini enak buat ngobrol sampai larut.")),
+  ],
+  objects: () => [
+    OBJ([[17, 2]], () => say("batin", "Jukebox tua. Lagu yang dia kirim jam dua pagi ada di daftar ini.")),
+    OBJ([[1, 7], [2, 7], [3, 7], [4, 7], [5, 7], [6, 7]], () => say("barista", "Kopi susu gula aren lagi? Udah kuhafal pesananmu.")),
+  ],
+  objective: () => (!S.f.talked ? `Temui ${S.heroine} di meja dekat jendela` : ""),
+  async enter() {
+    setStatus("Warm Friend");
+    await say("n", "Tingkat akhir. Obrolan kami pindah dari koridor ke chat larut malam, lalu ke kafe ini.");
+  },
+};
+
+const ACTS = [ACT1, ACT2, ACT3, ACT4];
+
+/* =====================================================================
+   ALUR: judul babak, pindah babak, ending
+   ===================================================================== */
+function actTitle(A) {
+  return new Promise((res) => {
+    const ov = $("#ov");
+    ov.innerHTML = `<div><div class="big">- ${A.sem} -</div><div class="sub">${A.title}</div></div>`;
+    ov.hidden = false; ov.style.opacity = 1;
+    mode = "overlay";
+    let done = false;
+    const end = () => {
+      if (done) return;
+      done = true; overlayConfirm = null; mode = "busy";
+      ov.style.opacity = 0;
+      setTimeout(() => { ov.hidden = true; res(); }, 400);
+    };
+    overlayConfirm = end;
+    setTimeout(end, 2600);
+  });
+}
+
+async function loadAct(i) {
+  actIndex = i;
+  const A = ACTS[i];
+  $("#box").hidden = true;
+  $("#fade").style.opacity = 0;
+  setMap(A.map);
+  npcs = A.npcs();
+  objects = A.objects();
+  [P.x, P.y, P.dir] = A.start;
+  P.moving = false;
+  playMusic(A.music);
+  $("#hud").hidden = false;
+  updateHud();
+  await actTitle(A);
+  if (A.enter) await A.enter();
+}
+async function nextAct() { await loadAct(actIndex + 1); }
+
+const ENDINGS = {
+  async true() {
+    const her = npc("heroine");
+    faceToward(P, her); faceToward(her, P);
+    await say("p", "Aku suka kamu. Dari meja Uno itu. Dari \"apa loh\" itu.");
+    emote("heroine", "!");
+    await wait(900);
+    emote("heroine", "heart", 4000);
+    await say("h", "...Lama banget sih kamu, Pisces.");
+    setStatus("Lover");
+    return ["TRUE ENDING", "Bagaikan Lagu Gemini & Pisces"];
+  },
+  async bittersweet() {
+    await say("batin", "Mungkin begini saja sudah cukup. Hangat, tanpa risiko kehilangan.");
+    emote("heroine", "note");
+    await say("h", "Makasih ya, udah jadi teman yang paling ngerti aku.");
+    return ["BITTERSWEET ENDING", "Comfort Zone / Forever Warmth"];
+  },
+  async regret() {
+    $("#fade").style.opacity = 1;
+    playMusic("act2");
+    await wait(800);
+    await say("n", "Skripsi, sidang, wisuda. Chat kami makin jarang, lalu berhenti.");
+    await say("batin", "Ada satu bab yang tak pernah kutulis.");
+    return ["REGRET ENDING", "The Unspoken Chapter"];
+  },
+};
+
+async function finishGame() {
+  const [title, sub] = await ENDINGS[resolveEnding()]();
+  $("#box").hidden = true;
+  const ov = $("#ov");
+  ov.innerHTML = `<div>
+    <div class="big">${title}</div>
+    <div class="sub">"${sub}"</div>
+    <div class="stats">
+      <span style="color:${STAT_COLOR.affection}">Affection</span><span>${S.affection}</span>
+      <span style="color:${STAT_COLOR.trust}">Trust</span><span>${S.trust}</span>
+      <span style="color:${STAT_COLOR.curiosity}">Curiosity</span><span>${S.curiosity}</span>
+      <span style="color:${STAT_COLOR.class_rep}">Reputasi Kelas</span><span>${S.class_rep}</span>
+      <span>Keraguan</span><span>${S.hesitation}</span>
+      <span>Nada cocok</span><span>${S.tone}/3</span>
+    </div>
+    <div class="hint">TEKAN Z UNTUK KEMBALI KE JUDUL</div>
+  </div>`;
+  ov.hidden = false; ov.style.opacity = 1;
+  mode = "ending";
+}
+
+/* =====================================================================
+   LAYAR JUDUL
+   ===================================================================== */
+let titleSel = 0;
+const TITLE_OPTS = ["MULAI DARI AWAL", "LOMPAT: SEMESTER 4-5", "LOMPAT: SEMESTER 6", "LOMPAT: SEMESTER 7"];
+
+function titleScreen() {
+  resetState();
+  map = null; npcs = []; objects = [];
+  $("#hud").hidden = true; $("#box").hidden = true; $("#choice").hidden = true;
+  $("#fade").style.opacity = 0;
+  titleSel = 0;
+  const ov = $("#ov");
+  ov.innerHTML = `<div>
+    <div class="logo">ECHOES<br>OF SEMESTER</div>
+    <div class="sub">Kisah Gemini &amp; Pisces</div>
+    <div class="duo"><canvas id="tp" width="16" height="16"></canvas><span>+</span><canvas id="th" width="16" height="16"></canvas></div>
+    <label>NAMA: <input id="pname" maxlength="10" value="Raka" autocomplete="off"></label>
+    <div><div class="menu">${TITLE_OPTS.map((t, i) => `<div data-i="${i}">${t}</div>`).join("")}</div></div>
+    <div class="hint">[ATAS/BAWAH] pilih &nbsp; [ENTER] mulai</div>
+  </div>`;
+  ov.hidden = false; ov.style.opacity = 1;
+  $("#tp").getContext("2d").drawImage(SPR.player.down[0], 0, 0);
+  $("#th").getContext("2d").drawImage(SPR.heroine.down[0], 0, 0);
+  ov.querySelectorAll(".menu div").forEach((el) => {
+    el.onmouseenter = () => selectTitle(Number(el.dataset.i));
+    el.onclick = () => { selectTitle(Number(el.dataset.i)); startGame(); };
+  });
+  selectTitle(0);
+  playMusic("act4");
+  mode = "title";
+  setTimeout(() => $("#pname") && $("#pname").focus(), 50);
+}
+function selectTitle(i) {
+  titleSel = i;
+  document.querySelectorAll("#ov .menu div").forEach((el, j) => el.classList.toggle("sel", j === i));
+}
+function titleKey(e) {
+  if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+    e.preventDefault();
+    selectTitle((titleSel + (e.key === "ArrowUp" ? -1 : 1) + TITLE_OPTS.length) % TITLE_OPTS.length);
+    sfx.move();
+  } else if (e.key === "Enter") {
+    e.preventDefault();
+    startGame();
+  }
+}
+function startGame() {
+  initAudio();
+  sfx.ok();
+  S.player = ($("#pname").value || "").trim() || "Raka";
+  $("#ov").hidden = true;
+  run(() => loadAct(titleSel));
+}
+
+titleScreen();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
