@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Echoes of Semester</title>
 <meta name="description" content="RPG piksel naratif tentang ekspektasi dan realita, dari semester 3 sampai 7. Bisa dimainkan di browser, laptop, maupun HP.">
+<meta name="author" content="Muhammad Aditya">
 <meta property="og:title" content="Echoes of Semester">
 <meta property="og:description" content="RPG piksel naratif tentang ekspektasi dan realita, dari semester 3 sampai 7.">
 <meta property="og:type" content="website">
@@ -67,7 +68,7 @@
     40% { transform: translate(6px, -3px); } 60% { transform: translate(-4px, 2px); } 80% { transform: translate(3px, -1px); }
   }
   #fade { position: absolute; inset: 0; z-index: 7; background: var(--night); opacity: 0; pointer-events: none; transition: opacity .7s; }
-  /* transisi iris: lingkaran yang menutup/membuka di sekitar Ditya */
+  /* transisi iris: lingkaran yang menutup/membuka di sekitar Adgan */
   #iris { position: absolute; inset: 0; z-index: 7; pointer-events: none;
     background: radial-gradient(circle at var(--ix, 50%) var(--iy, 50%), transparent var(--ir, 0px), var(--night) calc(var(--ir, 0px) + 1.5px)); }
   #tirai { position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none; }
@@ -96,7 +97,7 @@
     transition: transform .5s var(--back), opacity .25s;
   }
   #hud.on { opacity: 1; transform: none; }
-  #hud.on.redup { opacity: .32; }   /* Ditya dekat tepi atas: bilah atas menipis supaya papan nama terlihat */
+  #hud.on.redup { opacity: .32; }   /* Adgan dekat tepi atas: bilah atas menipis supaya papan nama terlihat */
   #hud .brand { flex: none; display: flex; flex-direction: column; align-items: flex-start; gap: calc(var(--u) * 1); }
   #hud .brand b {
     font: 700 max(14px, calc(var(--u) * 4.8))/1 var(--f-pix); color: #fff; letter-spacing: .05em; white-space: nowrap;
@@ -343,7 +344,7 @@
 
   /* ---------- Layar sentuh (HP & tablet) ----------
      body.sentuh dipasang otomatis saat layar disentuh (lihat INPUT). D-pad & tombol Z hanya muncul
-     saat Ditya bisa berjalan; dialog, pilihan, dan ponsel cukup diketuk langsung. */
+     saat Adgan bisa berjalan; dialog, pilihan, dan ponsel cukup diketuk langsung. */
   html, body { overscroll-behavior: none; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   html, body, #wrap { touch-action: none; }
   #wrap, #putar { -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
@@ -388,6 +389,13 @@
   #zbtn.on .top { transform: translate(1.3px, 1.3px); }
   #zbtn.on .bd { fill: var(--bolt); }
 
+  /* Tanda hak cipta: kecil & samar di pojok kanan bawah, tidak bisa diketuk.
+     Menyingkir saat kotak dialog atau layar terbelah tampil supaya tidak menabrak teks. */
+  #hak { position: absolute; z-index: 12; right: calc(6px + env(safe-area-inset-right, 0px)); bottom: calc(3px + env(safe-area-inset-bottom, 0px));
+    font: 400 max(8px, calc(var(--u) * 2.3))/1 var(--f-pix); letter-spacing: .06em; color: #fff; opacity: .42; white-space: nowrap;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, .75); pointer-events: none; user-select: none; transition: opacity .3s; }
+  #box:not([hidden]) ~ #hak, #split:not([hidden]) ~ #hak { opacity: 0; }
+
   /* HP tegak: minta diputar mendatar (game dirancang untuk layar lebar) */
   #putar { position: fixed; inset: 0; z-index: 50; display: none; place-items: center; padding: 24px; background: var(--night); text-align: center; touch-action: none; }
   @media (orientation: portrait) and (max-width: 600px) and (hover: none) and (pointer: coarse) { #putar { display: grid; } }
@@ -415,7 +423,7 @@
     <div id="mg" class="paper" hidden>
       <div class="row"><span class="ttl">FREKUENSI</span><span id="mg-round"></span></div>
       <canvas id="mg-wave" width="144" height="24"></canvas>
-      <div class="row"><span class="her">~ UMI</span><span class="me">DITYA ~</span></div>
+      <div class="row"><span class="her">~ UMI</span><span class="me">ADGAN ~</span></div>
       <div class="timer"><i id="mg-tfill"></i></div>
       <div id="mg-res" hidden></div>
     </div>
@@ -441,6 +449,7 @@
     <div id="prompt" hidden></div>
     <div id="toasts"></div>
     <div id="ov"></div>
+    <div id="hak">&copy; 2026 Muhammad Aditya</div>
     <!-- kontrol layar sentuh (HP/tablet) -->
     <div id="pad" aria-hidden="true">
       <div id="dpad" class="ctl"><svg viewBox="0 0 36 36" shape-rendering="crispEdges">
@@ -1157,7 +1166,7 @@ const ARROW = patCanvas([
   "...KOK...",
   "....K....",
 ], { K: "#1b2416", W: "#fff7c2", Y: "#ffd23f", O: "#d8901a" });
-// Gelembung tombol "Z" yang muncul di atas benda/orang di depan Ditya
+// Gelembung tombol "Z" yang muncul di atas benda/orang di depan Adgan
 const KEYCAP = patCanvas([
   "KKKKKKKKK",
   "KwwwwwwwK",
@@ -1894,7 +1903,7 @@ function drawTileAnim(now, cx, cy) {
 const S = {};
 function resetState() {
   Object.assign(S, {
-    player: "Ditya", exp: 0, expPeak: 0, expLabel: "", meter: null, future: 0, cracked: false,
+    player: "Adgan", exp: 0, expPeak: 0, expLabel: "", meter: null, future: 0, cracked: false,
     f: {}, chat: [],
     st: { sync: 0, glance: 0, held: 0, sesiB: false, cred: 3, honest: null, bias: 0, lines: 0 },
   });
@@ -2096,7 +2105,7 @@ $("#b-full").addEventListener("click", (e) => { e.stopPropagation(); toggleFull(
 
 /* ---------- Layar sentuh: D-pad & tombol Z ----------
    body.sentuh dipasang sejak awal di HP/tablet, atau begitu layar disentuh; dilepas lagi saat keyboard dipakai.
-   Kontrol hanya tampil saat Ditya bisa berjalan (lihat update); dialog, pilihan, & ponsel cukup diketuk.
+   Kontrol hanya tampil saat Adgan bisa berjalan (lihat update); dialog, pilihan, & ponsel cukup diketuk.
    Arah yang sedang ditahan berhenti dipakai setiap kali sebuah adegan dimulai (run), supaya adegan pemicu
    (mis. garis batas) tidak terulang terus selama jempol menempel; geser atau angkat jempol untuk jalan lagi. */
 let touchUI = false, padDir = null, padLive = false, padShown = false, tapOn = null, wakeLock = null;
@@ -2312,8 +2321,8 @@ function prompt(text) {
 }
 
 /* ---------- Transisi: iris (lingkaran) & tirai piksel ----------
-   fadeOut: lingkaran menutup ke arah Ditya (atau ke tengah layar kalau Ditya tidak tampak).
-   fadeIn : lingkaran membuka dari Ditya. Sesudah tertutup penuh, #fade (hitam) yang menahan layar. */
+   fadeOut: lingkaran menutup ke arah Adgan (atau ke tengah layar kalau Adgan tidak tampak).
+   fadeIn : lingkaran membuka dari Adgan. Sesudah tertutup penuh, #fade (hitam) yang menahan layar. */
 const fadeEl = $("#fade"), irisEl = $("#iris");
 let irisTok = 0;
 function irisCenter() {
@@ -2696,7 +2705,7 @@ function drawArrow(X, Y, now) {
   const k = 0.5 - 0.5 * Math.cos(((now + X * 13) / 420) * Math.PI);
   ctx.drawImage(ARROW, Math.round(X - 4), Math.round(Y - 4 + k * 4));
 }
-// Benda/orang tepat di depan Ditya (untuk gelembung tombol Z)
+// Benda/orang tepat di depan Adgan (untuk gelembung tombol Z)
 function frontTarget() {
   if (!P || P.moving || P.hidden || mode !== "walk") return null;
   const [dx, dy] = DIRV[P.dir], tx = P.x + dx, ty = P.y + dy;
@@ -3063,7 +3072,7 @@ function render(now, dt) {
 }
 // Peta kecil di pojok kiri bawah untuk lorong panjang (di layar sentuh: tengah bawah, karena pojok kiri dipakai D-pad)
 const MINI_COL = { ".": "#d8d0c4", ":": "#d8d0c4", g: "#7cc062", "=": "#c8b8a0", a: "#3a78b0", t: "#2f7a3e", r: "#8a8e98", "~": "#6a8a60", E: "#a8a090", b: "#8a5a30", P: "#3a8a3a", F: "#e8e4dc", u: "#ff9ad0", G: "#b8b0a0" };
-// bingkai kayu dengan paku di sudut; titik Ditya berdenyut
+// bingkai kayu dengan paku di sudut; titik Adgan berdenyut
 function drawMinimap(now, cx) {
   const m = 2, w = map.w * m, h = map.h * m, X = touchUI ? Math.round((VW - w) / 2) : 8, Y = VH - h - 8;
   rect(ctx, "rgba(0,0,0,.35)", X - 3, Y - 2, w + 8, h + 8);
@@ -4797,7 +4806,7 @@ async function loadScene(id) {
   await reveal();
   if (A.enter) await A.enter();
 }
-// buka layar: iris dari Ditya kalau layar sedang gelap
+// buka layar: iris dari Adgan kalau layar sedang gelap
 async function reveal(ms = 650) {
   if (fadeEl.style.opacity === "1" || !irisEl.hidden) await fadeIn(ms);
   else { fadeEl.style.transition = "opacity .5s"; fadeEl.style.opacity = 0; }
@@ -4832,7 +4841,7 @@ async function actCard(A) {
   mode = "busy";
 }
 
-// Layar judul: gerbang kampus malam hari, kunang-kunang, lampu gerbang, dan Ditya berjalan dengan senter
+// Layar judul: gerbang kampus malam hari, kunang-kunang, lampu gerbang, dan Adgan berjalan dengan senter
 const TITLE_SCENE = { props: [{ y: 7.5, d: (now) => drawGateArch(now) }], fx: { fireflies: 110, clouds: true, tint: "rgba(30,14,70,.5)", vig: "20,8,50", vigA: 0.7, glows: [] } };
 let titleSel = 0, chapterSel = 0;
 function titleScreen() {
@@ -4849,8 +4858,8 @@ function titleScreen() {
   P = null;
   npcs = [
     mkEnt("cat", 8, 8, "right", { cat: "sleep" }),
-    // Ditya menyusuri tepi kolam dengan senter (di bawah menu, jadi tidak tertutup judul)
-    mkEnt("ditya", 21, 8, "right", { pal: "hero", torch: true, speed: 2, look: ["left", "right", "down"], wander: { pts: [[26, 8], [20, 8]], i: 1, until: performance.now() + 700, min: 1600, max: 3000 } }),
+    // Adgan menyusuri tepi kolam dengan senter (di bawah menu, jadi tidak tertutup judul)
+    mkEnt("adgan", 21, 8, "right", { pal: "hero", torch: true, speed: 2, look: ["left", "right", "down"], wander: { pts: [[26, 8], [20, 8]], i: 1, until: performance.now() + 700, min: 1600, max: 3000 } }),
   ];
   objects = [];
   parts.length = 0;
@@ -4860,9 +4869,9 @@ function titleScreen() {
   updateHud();
   ovShow(`<div class="title">
     <div class="logo">ECHOES<br>OF SEMESTER</div>
-    <div class="tsub">kisah Ditya, dari semester tiga sampai tujuh</div>
+    <div class="tsub">kisah Adgan, dari semester tiga sampai tujuh</div>
     <div class="duo">
-      <figure><canvas id="tp" width="16" height="16"></canvas><figcaption>DITYA</figcaption></figure>
+      <figure><canvas id="tp" width="16" height="16"></canvas><figcaption>ADGAN</figcaption></figure>
       <canvas id="tm" class="mid" width="9" height="9"></canvas>
       <figure><canvas id="th" width="16" height="16"></canvas><figcaption>UMI</figcaption></figure>
     </div>
@@ -4924,7 +4933,7 @@ async function startGame() {
   initAudio();
   keepAwake();
   sfx.ok();
-  S.player = "Ditya";
+  S.player = "Adgan";
   const start = titleSel === 1 ? CHAPTERS[chapterSel][1] : "b1";
   if (SCENES[start].preset) SCENES[start].preset();
   await curtain(true, 600);

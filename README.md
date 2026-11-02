@@ -1,8 +1,12 @@
 # Echoes of Semester
 
 RPG pixel naratif tentang ekspektasi dan realita, dari semester 3 sampai 7.
-Tokoh utama: **Ditya**. Tokoh perempuan: **Umi**.
+Tokoh utama: **Adgan**. Tokoh perempuan: **Umi**.
 Naskah cerita (sumber utama): `docs/CERITA.md`.
+
+Main langsung: **https://echoes-of-semester.vercel.app** (browser, laptop, atau HP)
+
+© 2026 Muhammad Aditya
 
 ## Main (paling mudah)
 
@@ -61,11 +65,11 @@ Lapisan animasi: lampu hias & berkas sinar jendela, debu melayang, hujan, angin,
 kupu-kupu (terbang, hinggap, berbayang), ikan koi yang sesekali melompat & riak air, bayangan awan, kucing kampus,
 pohon yang melentur tertiup hembusan angin, jejak kaki & debu langkah, NPC berkedip/bicara/tertawa/menoleh,
 balon celetukan, bantalan cahaya & panah penanda yang naik-turun, gelembung tombol **Z** di depan benda/orang,
-papan nama ruangan yang mengambang, senter Ditya di layar judul malam, sorot cahaya, efek gelombang,
+papan nama ruangan yang mengambang, senter Adgan di layar judul malam, sorot cahaya, efek gelombang,
 dan peta kecil berbingkai kayu di lorong panjang.
 
 Gaya animasinya mengikuti situs portofolio piksel rahmateka.my.id: kanvas memenuhi layar dengan zoom piksel bulat,
-transisi **iris** (lingkaran menutup/membuka di sekitar Ditya), **tirai piksel** diagonal saat membuka/memulai,
+transisi **iris** (lingkaran menutup/membuka di sekitar Adgan), **tirai piksel** diagonal saat membuka/memulai,
 judul yang jatuh memantul, UI kertas-tinta dengan tombol piksel yang bisa "ditekan", kabar yang meluncur dari atas,
 dan bilah atas (babak, misi, bar ♥) yang melayang di atas game.
 

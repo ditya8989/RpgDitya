@@ -2,7 +2,7 @@
 
 Sumber utama cerita game. Teks di bawah ini adalah cerita asli; game di `web-prototype/index.html` mengikutinya babak demi babak.
 
-Tokoh utama ("kamu" dalam narasi) bernama **Ditya**; tokoh perempuannya **Umi**.
+Tokoh utama ("kamu" dalam narasi) bernama **Adgan**; tokoh perempuannya **Umi**.
 
 ## Babak I: Meja UNO dan Frekuensi yang Pas (Semester 3)
 
